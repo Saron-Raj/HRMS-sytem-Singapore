@@ -3,9 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Employee, AttendanceRecord, AttendanceStatus, AppSettings } from '../types';
 import { calculateDailyTotal, calculateOtHours } from '../utils/calculations';
-import { format, addDays, isSunday } from 'date-fns';
-import subDays from 'date-fns/subDays';
-import parseISO from 'date-fns/parseISO';
+import { format, addDays, isSunday, subDays, parseISO } from 'date-fns';
 import { Calendar, CheckCircle, ChevronLeft, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -198,22 +196,22 @@ const Attendance = () => {
   
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-900">Attendance</h2>
           <p className="text-slate-500 mt-1">Editing: <span className="font-bold text-blue-600">{format(parseISO(selectedDate), 'EEEE, dd MMM yyyy')}</span></p>
         </div>
         
-        <div className="flex items-center gap-3">
-            <div className="flex items-center bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center bg-white p-1 rounded-xl shadow-sm border border-slate-200 w-full sm:w-auto">
                 <button onClick={handlePrevDay} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"><ChevronLeft size={20} /></button>
-                <div className="px-2 border-x border-slate-100 flex items-center relative">
+                <div className="px-2 border-x border-slate-100 flex items-center relative flex-1 sm:flex-none">
                     <Calendar size={16} className="text-blue-500 absolute left-3 pointer-events-none" />
-                    <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="pl-9 pr-2 py-1 outline-none bg-white text-black font-bold text-sm cursor-pointer w-[140px]" />
+                    <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="pl-9 pr-2 py-1 outline-none bg-white text-black font-bold text-sm cursor-pointer w-full sm:w-[140px]" />
                 </div>
                 <button onClick={handleNextDay} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"><ChevronRight size={20} /></button>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-200 text-xs font-bold shadow-sm">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-200 text-xs font-bold shadow-sm whitespace-nowrap">
                 <CheckCircle size={14} /> {lastSaved ? `Auto-Saved ${format(lastSaved, 'HH:mm:ss')}` : 'Ready'}
             </div>
         </div>
@@ -221,7 +219,7 @@ const Attendance = () => {
       
       {(isHolidayDate || isSundayDate) && (
           <div className="bg-purple-100 border border-purple-200 rounded-xl p-4 flex items-center gap-3 text-purple-900 shadow-sm animate-fade-in">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-purple-600 shadow-sm font-bold text-xl">!</div>
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-purple-600 shadow-sm font-bold text-xl flex-none">!</div>
               <div>
                   <h4 className="font-bold text-sm uppercase tracking-wide">{isHolidayDate ? `Public Holiday: ${currentHoliday?.name}` : 'Sunday Work Rate'}</h4>
                   <p className="text-xs text-purple-700">Work done on this date is calculated at <b>{settings.holidayPayMultiplier || 1.5}x</b> pay rate automatically.</p>
@@ -231,17 +229,18 @@ const Attendance = () => {
 
       <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          {/* Added min-w-[1200px] to force horizontal scrolling on smaller screens so columns don't squash */}
+          <table className="w-full text-sm text-left min-w-[1200px]">
             <thead className="bg-slate-50/50 text-slate-500 uppercase text-xs font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-5">Employee Name</th>
-                <th className="px-4 py-5 text-center w-48">In Time</th>
-                <th className="px-4 py-5 text-center w-48">Out Time</th>
-                <th className="px-2 py-5 text-center w-20">OT (Hrs)</th>
-                <th className="px-2 py-5 text-center w-20">Lunch (Hrs)</th>
-                <th className="px-4 py-5">Site Location</th>
-                <th className="px-4 py-5">Remarks (MC/OFF)</th>
-                <th className="px-6 py-5 text-right">Est. Pay</th>
+                <th className="px-6 py-5 min-w-[200px]">Employee Name</th>
+                <th className="px-4 py-5 text-center w-48 min-w-[150px]">In Time</th>
+                <th className="px-4 py-5 text-center w-48 min-w-[150px]">Out Time</th>
+                <th className="px-2 py-5 text-center w-20 min-w-[80px]">OT (Hrs)</th>
+                <th className="px-2 py-5 text-center w-20 min-w-[80px]">Lunch (Hrs)</th>
+                <th className="px-4 py-5 min-w-[160px]">Site Location</th>
+                <th className="px-4 py-5 min-w-[140px]">Remarks (MC/OFF)</th>
+                <th className="px-6 py-5 text-right min-w-[100px]">Est. Pay</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

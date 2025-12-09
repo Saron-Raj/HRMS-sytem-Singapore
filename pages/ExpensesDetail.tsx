@@ -4,8 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { StorageService } from '../services/storage';
 import { SiteLogRecord } from '../types';
 import { ArrowLeft, Save, Users, Construction, CheckSquare, Trash2, MapPin } from 'lucide-react';
-import { format, differenceInMinutes } from 'date-fns';
-import parse from 'date-fns/parse';
+import { format, differenceInMinutes, parse } from 'date-fns';
 
 const SINGAPORE_LOCATIONS = [
     "Ang Mo Kio", "Bedok", "Bishan", "Boon Lay", "Bukit Batok", "Bukit Merah", "Bukit Panjang", 
@@ -187,11 +186,11 @@ const ExpensesDetail = () => {
                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                             <div>
                                 <label className={labelClass}>Pax (GW)</label>
-                                <input type="number" className={inputClass} placeholder="0" value={formData.paxGw || ''} onChange={e => setFormData({...formData, paxGw: parseInt(e.target.value) || 0})} />
+                                <input type="number" className={inputClass} value={formData.paxGw} onChange={e => setFormData({...formData, paxGw: parseFloat(e.target.value) || 0})} />
                             </div>
                             <div>
                                 <label className={labelClass}>Pax (REO)</label>
-                                <input type="number" className={inputClass} placeholder="0" value={formData.paxReo || ''} onChange={e => setFormData({...formData, paxReo: parseInt(e.target.value) || 0})} />
+                                <input type="number" className={inputClass} value={formData.paxReo} onChange={e => setFormData({...formData, paxReo: parseFloat(e.target.value) || 0})} />
                             </div>
                             <div>
                                 <label className={labelClass}>Start Time</label>
@@ -203,116 +202,81 @@ const ExpensesDetail = () => {
                             </div>
                          </div>
                          
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-blue-100">
-                             <div>
-                                 <label className={labelClass}>Total Hours</label>
-                                 <input type="number" step="0.5" className={inputClass} value={formData.totalHours || ''} onChange={e => setFormData({...formData, totalHours: parseFloat(e.target.value) || 0})} />
-                             </div>
-                             <div>
-                                 <label className={labelClass}>Hourly Rate ($)</label>
-                                 <input type="number" step="0.5" className={inputClass} placeholder="14" value={formData.hourlyRate || ''} onChange={e => setFormData({...formData, hourlyRate: parseFloat(e.target.value) || 0})} />
-                             </div>
-                             <div>
-                                 <label className={labelClass}>Calc. Manpower Cost ($)</label>
-                                 <div className="w-full h-[46px] flex items-center px-4 bg-white border border-blue-200 rounded-xl font-bold text-blue-700 text-lg shadow-sm">
-                                     ${formData.manpowerCost?.toFixed(2) || '0.00'}
-                                 </div>
-                             </div>
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className={labelClass}>Total Hours</label>
+                                <input type="number" step="0.5" className={inputClass} value={formData.totalHours} onChange={e => setFormData({...formData, totalHours: parseFloat(e.target.value) || 0})} />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Hourly Rate ($)</label>
+                                <input type="number" step="0.5" className={inputClass} value={formData.hourlyRate} onChange={e => setFormData({...formData, hourlyRate: parseFloat(e.target.value) || 0})} />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Total Cost ($)</label>
+                                <input type="number" step="0.01" readOnly className={`${inputClass} bg-slate-200 text-slate-500`} value={formData.manpowerCost} />
+                            </div>
                          </div>
                     </div>
 
-                    {/* Materials Section */}
-                    <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100">
-                         <h4 className="text-sm font-bold text-emerald-600 uppercase mb-4 flex items-center gap-2">
+                    {/* Materials & Machinery */}
+                    <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100">
+                         <h4 className="text-sm font-bold text-amber-600 uppercase mb-4 flex items-center gap-2">
                             <Construction size={16} /> Materials & Machinery
                          </h4>
-                         
+
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <label className={labelClass}>Premix Buy (Ton)</label>
-                                <input type="number" step="0.1" className={inputClass} placeholder="0.0" value={formData.premixTon || ''} onChange={e => setFormData({...formData, premixTon: parseFloat(e.target.value)})} />
+                                <label className={labelClass}>Diesel Usage</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <input type="text" placeholder="Litres / Details" className={inputClass} value={formData.diesel} onChange={e => setFormData({...formData, diesel: e.target.value})} />
+                                    <input type="number" placeholder="Cost ($)" step="0.01" className={inputClass} value={formData.dieselCost} onChange={e => setFormData({...formData, dieselCost: parseFloat(e.target.value) || 0})} />
+                                </div>
                             </div>
-                            <div>
-                                <label className={labelClass}>Premix Cost ($)</label>
-                                <input type="number" step="0.1" className={inputClass} placeholder="0.00" value={formData.premixCost || ''} onChange={e => setFormData({...formData, premixCost: parseFloat(e.target.value)})} />
-                            </div>
-                         </div>
-                         
-                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                              <div>
-                                <label className={labelClass}>Diesel Cost ($)</label>
-                                <input type="number" step="0.01" className={inputClass} placeholder="0.00" value={formData.dieselCost || ''} onChange={e => setFormData({...formData, dieselCost: parseFloat(e.target.value)})} />
-                             </div>
-                             <div className="lg:col-span-2">
-                                <label className={labelClass}>Diesel Details (Optional)</label>
-                                <input type="text" className={inputClass} placeholder="e.g. 100 Liters" value={formData.diesel} onChange={e => setFormData({...formData, diesel: e.target.value})} />
-                             </div>
+                                <label className={labelClass}>Premix</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <input type="number" placeholder="Tons" step="0.1" className={inputClass} value={formData.premixTon} onChange={e => setFormData({...formData, premixTon: parseFloat(e.target.value) || 0})} />
+                                    <input type="number" placeholder="Cost ($)" step="0.01" className={inputClass} value={formData.premixCost} onChange={e => setFormData({...formData, premixCost: parseFloat(e.target.value) || 0})} />
+                                </div>
+                            </div>
                          </div>
 
-                         <div className="grid grid-cols-1 gap-6 mb-6">
-                             <div>
-                                <label className={labelClass}>Material Buy Cost ($)</label>
-                                <input type="number" className={inputClass} placeholder="0.00" value={formData.materialBuy || ''} onChange={e => setFormData({...formData, materialBuy: parseFloat(e.target.value)})} />
-                             </div>
-                         </div>
-                         
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div>
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
                                 <label className={labelClass}>Graded Stone / Cement</label>
-                                <input type="text" className={inputClass} placeholder="Details" value={formData.gradedStone} onChange={e => setFormData({...formData, gradedStone: e.target.value})} />
-                             </div>
+                                <input type="text" className={inputClass} value={formData.gradedStone} onChange={e => setFormData({...formData, gradedStone: e.target.value})} />
+                            </div>
                              <div>
-                                <label className={labelClass}>Soil (Out) / Throw</label>
-                                <input type="text" className={inputClass} placeholder="Details" value={formData.soilThrow} onChange={e => setFormData({...formData, soilThrow: e.target.value})} />
-                             </div>
+                                <label className={labelClass}>Soil Out / Throw</label>
+                                <input type="text" className={inputClass} value={formData.soilThrow} onChange={e => setFormData({...formData, soilThrow: e.target.value})} />
+                            </div>
+                             <div>
+                                <label className={labelClass}>Material Buy ($)</label>
+                                <input type="number" step="0.01" className={inputClass} value={formData.materialBuy} onChange={e => setFormData({...formData, materialBuy: parseFloat(e.target.value) || 0})} />
+                            </div>
                          </div>
                     </div>
 
                     {/* Remarks */}
                     <div>
-                        <label className={labelClass}>Remarks</label>
-                        <textarea 
-                            rows={3}
-                            placeholder="Additional notes..."
-                            className={inputClass}
-                            value={formData.remarks}
-                            onChange={e => setFormData({...formData, remarks: e.target.value})}
-                        />
+                         <label className={labelClass}>Remarks</label>
+                         <textarea rows={3} className={inputClass} value={formData.remarks} onChange={e => setFormData({...formData, remarks: e.target.value})} placeholder="Additional notes..." />
                     </div>
-                </form>
-            </div>
 
-            {/* Footer Actions */}
-            <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
-                 <div>
-                     {!isNew && (
-                        <button 
-                            type="button"
-                            onClick={handleDelete}
-                            className="px-4 py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl text-sm font-bold transition flex items-center gap-2"
-                        >
-                            <Trash2 size={16} /> Delete Record
+                    {/* Actions */}
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 flex-col sm:flex-row">
+                        <button type="button" onClick={() => navigate('/expenses')} className="px-6 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition order-2 sm:order-1">Cancel</button>
+                        {!isNew && (
+                            <button type="button" onClick={handleDelete} className="px-6 py-3 rounded-xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 transition flex items-center justify-center gap-2 order-3 sm:order-2">
+                                <Trash2 size={16} /> Delete
+                            </button>
+                        )}
+                        <button type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 transition-all order-1 sm:order-3">
+                            <CheckSquare size={16} /> Save Record
                         </button>
-                     )}
-                 </div>
-                 
-                 <div className="flex gap-3 w-full sm:w-auto">
-                     <button 
-                        type="button"
-                        onClick={() => navigate('/expenses')}
-                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition"
-                     >
-                         Cancel
-                     </button>
-                     <button 
-                        type="submit"
-                        form="log-form"
-                        className="flex-1 sm:flex-none px-8 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2"
-                     >
-                         <CheckSquare size={16} />
-                         {isNew ? 'Create Record' : 'Save Changes'}
-                     </button>
-                 </div>
+                    </div>
+
+                </form>
             </div>
         </div>
     );

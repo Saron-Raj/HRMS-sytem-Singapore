@@ -3,11 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../services/api'; // Use new API Service
 import { SiteLogRecord, ExpenseSummary } from '../types';
 import { Plus, Search, Trash2, FileSpreadsheet, Construction, Wallet, Edit2, Check, Fuel, Users, HardHat, DollarSign, Loader2 } from 'lucide-react';
-import { format, endOfMonth } from 'date-fns';
-import parseISO from 'date-fns/parseISO';
-import startOfMonth from 'date-fns/startOfMonth';
+import { format, endOfMonth, parseISO, startOfMonth } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx';
+import { utils, writeFile } from 'xlsx';
 
 const Expenses = () => {
   const navigate = useNavigate();
@@ -124,15 +122,15 @@ const Expenses = () => {
       ]);
 
       const ws_data = [headers, subHeaders, ...dataRows];
-      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      const ws = utils.aoa_to_sheet(ws_data);
       const wscols = [
         {wch:5}, {wch:12}, {wch:15}, {wch:6}, {wch:6}, {wch:8}, {wch:8}, {wch:6}, {wch:6}, {wch:15},
         {wch:8}, {wch:10}, {wch:20}, {wch:10}, {wch:15}, {wch:20}, {wch:15}, {wch:30}
       ];
       ws['!cols'] = wscols;
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Site Log");
-      XLSX.writeFile(wb, `Site_Log_${startDate}_to_${endDate}.xlsx`);
+      const wb = utils.book_new();
+      utils.book_append_sheet(wb, ws, "Site Log");
+      writeFile(wb, `Site_Log_${startDate}_to_${endDate}.xlsx`);
   };
 
   const SummaryCard = ({ title, amount, icon: Icon, color, subValue }: any) => (
@@ -159,27 +157,27 @@ const Expenses = () => {
           <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Location Expenses</h2>
           <p className="text-slate-500 font-medium">Manage project budgets, manpower costs, and daily logs.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full md:w-auto">
             <button 
                 onClick={handleExportExcel} 
                 disabled={logs.length === 0}
-                className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition shadow-sm border border-emerald-100 flex items-center gap-2 font-bold text-sm disabled:opacity-50"
+                className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition shadow-sm border border-emerald-100 flex items-center gap-2 font-bold text-sm disabled:opacity-50 flex-1 md:flex-none justify-center"
             >
-                <FileSpreadsheet size={20} /> Export Excel
+                <FileSpreadsheet size={20} /> <span className="hidden sm:inline">Export</span> Excel
             </button>
             <button 
                 onClick={() => navigate('/expenses/new')}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex-1 md:flex-none justify-center"
             >
-                <Plus size={20} /> Add Daily Log
+                <Plus size={20} /> Add <span className="hidden sm:inline">Daily</span> Log
             </button>
         </div>
       </div>
 
       {/* FILTERS SECTION */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-                   <div className="relative flex-1 w-full lg:w-auto">
+          <div className="flex flex-col xl:flex-row gap-4 items-center">
+                   <div className="relative flex-1 w-full xl:w-auto">
                         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
                         <input 
                         type="text" 
@@ -189,9 +187,9 @@ const Expenses = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         />
                    </div>
-                   <div className="flex items-center gap-2 w-full lg:w-auto">
+                   <div className="flex items-center gap-2 w-full xl:w-auto">
                         <select 
-                                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-48"
+                                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 w-full xl:w-48"
                                 value={selectedSite}
                                 onChange={(e) => setSelectedSite(e.target.value)}
                         >
@@ -199,7 +197,7 @@ const Expenses = () => {
                             {uniqueSites.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                    </div>
-                   <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200 w-full lg:w-auto">
+                   <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200 w-full xl:w-auto">
                         <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 flex-1 md:flex-none">
                             <span className="text-[10px] font-bold text-slate-400 uppercase">From</span>
                             <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="outline-none text-xs font-bold text-slate-700 bg-transparent w-full" />
@@ -247,7 +245,7 @@ const Expenses = () => {
                 />
                 
                 {/* Grand Total */}
-                <div className="bg-slate-800 p-4 rounded-xl shadow-md flex flex-col justify-between h-full text-white min-h-[110px]">
+                <div className="bg-slate-800 p-4 rounded-xl shadow-md flex flex-col justify-between h-full text-white min-h-[110px] col-span-2 sm:col-span-1">
                     <div className="flex justify-between items-start">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Grand Total</span>
                         <div className="p-1.5 rounded-lg bg-slate-700 text-white">
@@ -261,7 +259,7 @@ const Expenses = () => {
                 </div>
 
                 {/* Budget Balance */}
-                <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between h-full relative group min-h-[110px]">
+                <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between h-full relative group min-h-[110px] col-span-2 sm:col-span-1">
                     <div className="flex justify-between items-start">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Project Balance</span>
                         <div className={`p-1.5 rounded-lg ${summary.balance >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
@@ -326,16 +324,16 @@ const Expenses = () => {
             <table className="w-full text-xs text-left">
                 <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider">
                 <tr>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Site Name</th>
-                    <th className="px-4 py-3 text-center">Hours</th>
-                    <th className="px-4 py-3 text-center">Pax (GW/REO)</th>
-                    <th className="px-4 py-3 text-right">Manpower ($)</th>
-                    <th className="px-4 py-3 text-right">Premix ($)</th>
-                    <th className="px-4 py-3 text-right">Diesel ($)</th>
-                    <th className="px-4 py-3 text-right">Material ($)</th>
-                    <th className="px-4 py-3">Remarks</th>
-                    <th className="px-4 py-3 text-center">Action</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Date</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Site Name</th>
+                    <th className="px-4 py-3 text-center whitespace-nowrap">Hours</th>
+                    <th className="px-4 py-3 text-center whitespace-nowrap">Pax (GW/REO)</th>
+                    <th className="px-4 py-3 text-right whitespace-nowrap">Manpower ($)</th>
+                    <th className="px-4 py-3 text-right whitespace-nowrap">Premix ($)</th>
+                    <th className="px-4 py-3 text-right whitespace-nowrap">Diesel ($)</th>
+                    <th className="px-4 py-3 text-right whitespace-nowrap">Material ($)</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Remarks</th>
+                    <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -354,14 +352,14 @@ const Expenses = () => {
                             <td className="px-4 py-3 font-bold text-slate-700 whitespace-nowrap">
                                 {format(parseISO(log.date), 'dd MMM yyyy')}
                             </td>
-                            <td className="px-4 py-3 font-medium text-slate-800">
+                            <td className="px-4 py-3 font-medium text-slate-800 whitespace-nowrap">
                                 {log.siteName}
                                 <div className="text-[10px] text-slate-400">{log.startTime} - {log.endTime}</div>
                             </td>
                             <td className="px-4 py-3 text-center font-bold text-slate-600">
                                 {log.totalHours}
                             </td>
-                            <td className="px-4 py-3 text-center">
+                            <td className="px-4 py-3 text-center whitespace-nowrap">
                                 <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1">{log.paxGw}</span>
                                 <span className="bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded text-[10px] font-bold">{log.paxReo}</span>
                             </td>

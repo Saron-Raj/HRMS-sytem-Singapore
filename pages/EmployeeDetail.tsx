@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Employee, SalaryType, Course, PayrollRecord } from '../types';
@@ -7,7 +8,6 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { calculateMonthlyPayroll } from '../utils/calculations';
 import { format } from 'date-fns';
-import subMonths from 'date-fns/subMonths';
 
 // Helper Component for Form Inputs
 const InputField = ({ label, type = "text", value, onChange, placeholder, required = false, options = [], disabled = false, className = "" }: any) => {
@@ -306,20 +306,21 @@ const EmployeeDetail = () => {
                  <button 
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`px-6 py-3 text-sm font-bold rounded-xl transition-all flex items-center gap-2 ${
+                    className={`flex-1 sm:flex-none px-4 py-3 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
                         activeTab === tab.id 
                         ? 'bg-blue-600 text-white shadow-md' 
                         : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                     }`}
                  >
                     <tab.icon size={18} />
-                    {tab.label}
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.slice(0,3)}</span>
                  </button>
             ))}
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 md:p-8">
             <form id="employee-form" onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto">
                 
                 {/* TAB: PERSONAL DETAILS */}
@@ -539,14 +540,14 @@ const EmployeeDetail = () => {
                 {activeTab === 'payroll' && (
                         <div className="space-y-4 animate-fade-in">
                             {!isNew ? (
-                                <div className="overflow-hidden rounded-xl border border-slate-100 shadow-sm">
+                                <div className="overflow-x-auto rounded-xl border border-slate-100 shadow-sm">
                                     <table className="w-full text-xs text-left">
                                         <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider">
                                             <tr>
-                                                <th className="px-4 py-3">Month</th>
-                                                <th className="px-4 py-3 text-center">Days</th>
-                                                <th className="px-4 py-3 text-center">OT Hours</th>
-                                                <th className="px-4 py-3 text-right">Net Pay</th>
+                                                <th className="px-4 py-3 whitespace-nowrap">Month</th>
+                                                <th className="px-4 py-3 text-center whitespace-nowrap">Days</th>
+                                                <th className="px-4 py-3 text-center whitespace-nowrap">OT Hours</th>
+                                                <th className="px-4 py-3 text-right whitespace-nowrap">Net Pay</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 bg-white">
@@ -578,24 +579,24 @@ const EmployeeDetail = () => {
 
         {/* Action Bar */}
         <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
-             <div className="flex gap-2">
+             <div className="flex gap-2 w-full sm:w-auto">
                  {!isNew && (
                      <>
                         <button 
                             type="button"
                             onClick={handleCancelWorker}
                             disabled={isSaving}
-                            className="px-4 py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl text-sm font-bold transition flex items-center gap-2 disabled:opacity-50"
+                            className="flex-1 sm:flex-none px-4 py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 whitespace-nowrap"
                         >
-                            <Trash2 size={16} /> Cancel Worker
+                            <Trash2 size={16} /> Cancel
                         </button>
                         <button 
                              type="button"
                              onClick={handlePrintProfile}
                              disabled={isSaving}
-                             className="px-4 py-2.5 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-bold transition flex items-center gap-2 border border-slate-200 disabled:opacity-50"
+                             className="flex-1 sm:flex-none px-4 py-2.5 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 border border-slate-200 disabled:opacity-50 whitespace-nowrap"
                         >
-                            <FileText size={16} /> Print Profile
+                            <FileText size={16} /> Print
                         </button>
                      </>
                  )}
@@ -614,10 +615,10 @@ const EmployeeDetail = () => {
                     type="submit"
                     form="employee-form"
                     disabled={isSaving}
-                    className="flex-1 sm:flex-none px-8 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 sm:flex-none px-8 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                  >
                      {isSaving ? <Loader2 size={16} className="animate-spin" /> : <CheckSquare size={16} />}
-                     {isNew ? 'Register Employee' : 'Save Changes'}
+                     {isNew ? 'Register' : 'Save'}
                  </button>
              </div>
         </div>

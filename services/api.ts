@@ -6,11 +6,7 @@ import {
 } from '../types';
 import { supabase } from './supabaseClient';
 import { StorageService } from './storage'; 
-import { differenceInDays, endOfWeek, eachDayOfInterval, format, addMonths, endOfMonth, isSunday } from 'date-fns';
-import startOfWeek from 'date-fns/startOfWeek';
-import parseISO from 'date-fns/parseISO';
-import parse from 'date-fns/parse';
-import startOfMonth from 'date-fns/startOfMonth';
+import { differenceInDays, endOfWeek, eachDayOfInterval, format, addMonths, endOfMonth, isSunday, startOfWeek, parseISO, parse, startOfMonth } from 'date-fns';
 import { calculateMonthlyPayroll, calculateDailyTotal, calculateOtHours, getWorkingDaysInMonth, calculateOtPay } from '../utils/calculations';
 import emailjs from '@emailjs/browser';
 

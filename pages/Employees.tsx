@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Employee, SalaryType } from '../types';
 import { Plus, Search, Trash2, Edit2, User, FileSpreadsheet, RotateCcw, Ban, Calendar, Loader2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx';
+import { utils, writeFile } from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
@@ -123,11 +124,11 @@ const Employees = () => {
           emp.cancellationDate ? format(new Date(emp.cancellationDate), 'dd-MM-yyyy') : '-'
       ]);
 
-      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Worker Details");
+      const ws = utils.aoa_to_sheet([headers, ...rows]);
+      const wb = utils.book_new();
+      utils.book_append_sheet(wb, ws, "Worker Details");
       ws['!cols'] = headers.map(() => ({ wch: 20 }));
-      XLSX.writeFile(wb, `Worker_List_${viewMode}.xlsx`);
+      writeFile(wb, `Worker_List_${viewMode}.xlsx`);
   };
 
   const filteredEmployees = employees.filter(e => e.name.toLowerCase().includes(searchTerm.toLowerCase()) || e.fin.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -164,7 +165,8 @@ const Employees = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          {/* Added min-w-[1000px] to force horizontal scroll on mobile if content is too wide */}
+          <table className="w-full text-sm text-left min-w-[1000px]">
             <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4">Name / Position</th>

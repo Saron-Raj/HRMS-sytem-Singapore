@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Employee, PayrollRecord } from '../types';
-import { format, addMonths } from 'date-fns';
-import subMonths from 'date-fns/subMonths';
-import parse from 'date-fns/parse';
+import { format, addMonths, subMonths, parse } from 'date-fns';
 import { Edit2, ChevronLeft, ChevronRight, Archive, Loader2, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import JSZip from 'jszip';

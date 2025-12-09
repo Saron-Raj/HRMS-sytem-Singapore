@@ -22,8 +22,7 @@ import AdminProfileModal from './components/AdminProfileModal';
 import { api } from './services/api';
 import { StorageService } from './services/storage';
 import { Bell, Search, LogOut, User, AlertCircle, X, Trash2 } from 'lucide-react';
-import { differenceInDays } from 'date-fns';
-import parseISO from 'date-fns/parseISO';
+import { differenceInDays, parseISO } from 'date-fns';
 
 interface HeaderProps {
     onLogout: () => void;

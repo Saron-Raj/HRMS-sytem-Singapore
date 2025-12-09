@@ -6,12 +6,9 @@ import { calculateOtHours, calculateDailyTotal } from '../utils/calculations';
 import { 
   format, addMonths, endOfMonth, 
   eachDayOfInterval, endOfWeek, isSameMonth, 
-  isSunday, isToday 
+  isSunday, isToday, subMonths, startOfMonth,
+  startOfWeek, parseISO
 } from 'date-fns';
-import subMonths from 'date-fns/subMonths';
-import startOfMonth from 'date-fns/startOfMonth';
-import startOfWeek from 'date-fns/startOfWeek';
-import parseISO from 'date-fns/parseISO';
 import { Calendar, ChevronLeft, ChevronRight, List, Grid, Save, CheckCircle } from 'lucide-react';
 
 interface Props {
@@ -245,7 +242,7 @@ export const AttendanceCalendar = ({ employeeId, compact = false, editable = fal
   const inputClass = "w-full text-center bg-white border border-slate-200 rounded px-1 py-1 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none";
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl">
+    <div className="flex flex-col h-full bg-white rounded-2xl overflow-hidden">
         {!compact && (
             <div className="bg-white px-2 py-4 flex flex-wrap gap-3 border-b border-slate-100 justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -273,30 +270,32 @@ export const AttendanceCalendar = ({ employeeId, compact = false, editable = fal
         )}
 
         {viewMode === 'grid' && (
-            <div className="flex-1 overflow-y-auto bg-slate-50/50 rounded-xl p-4">
-            <div className="grid grid-cols-7 gap-3 mb-3">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider">{day}</div>))}
-            </div>
-            <div className="grid grid-cols-7 gap-3">
-                {gridDays.map((day) => {
-                const status = getDayStatus(day);
-                const isCurrentMonth = isSameMonth(day, currentMonth);
-                const isTodayDate = isToday(day);
-
-                return (
-                    <div key={day.toISOString()} title={status.holidayName || status.label} className={`aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-bold border transition-all cursor-default relative group shadow-sm ${status.color} ${!isCurrentMonth ? 'opacity-30 grayscale' : ''} ${isTodayDate ? 'ring-2 ring-blue-500 ring-offset-2 z-10' : ''}`}>
-                    <span className={`${isTodayDate ? 'text-blue-600' : ''}`}>{format(day, 'd')}</span>
-                    {status.holidayName && (<span className="absolute top-1 right-1 bg-purple-600 text-white text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded-full shadow-sm">H</span>)}
+            <div className="flex-1 overflow-auto bg-slate-50/50 rounded-xl p-4">
+                <div className="min-w-[500px]">
+                    <div className="grid grid-cols-7 gap-3 mb-3">
+                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider">{day}</div>))}
                     </div>
-                );
-                })}
-            </div>
+                    <div className="grid grid-cols-7 gap-3">
+                        {gridDays.map((day) => {
+                        const status = getDayStatus(day);
+                        const isCurrentMonth = isSameMonth(day, currentMonth);
+                        const isTodayDate = isToday(day);
+
+                        return (
+                            <div key={day.toISOString()} title={status.holidayName || status.label} className={`aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-bold border transition-all cursor-default relative group shadow-sm ${status.color} ${!isCurrentMonth ? 'opacity-30 grayscale' : ''} ${isTodayDate ? 'ring-2 ring-blue-500 ring-offset-2 z-10' : ''}`}>
+                            <span className={`${isTodayDate ? 'text-blue-600' : ''}`}>{format(day, 'd')}</span>
+                            {status.holidayName && (<span className="absolute top-1 right-1 bg-purple-600 text-white text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded-full shadow-sm">H</span>)}
+                            </div>
+                        );
+                        })}
+                    </div>
+                </div>
             </div>
         )}
 
         {viewMode === 'list' && (
-            <div className="flex-1 overflow-y-auto bg-white">
-                <table className="w-full text-xs text-left">
+            <div className="flex-1 overflow-auto bg-white">
+                <table className="w-full text-xs text-left min-w-[500px]">
                     <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 sticky top-0 z-10">
                         <tr><th className="px-3 py-2 w-16">Date</th><th className="px-1 py-2 text-center w-28">In</th><th className="px-1 py-2 text-center w-28">Out</th><th className="px-2 py-2 w-14 text-center">OT</th><th className="px-2 py-2 w-12 text-center">Lun</th><th className="px-3 py-2">Site / Remarks</th></tr>
                     </thead>

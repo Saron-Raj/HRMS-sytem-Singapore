@@ -227,8 +227,9 @@ const AiAssistant = () => {
     };
 
     return (
-        <div className="h-[calc(100vh-140px)] flex flex-col gap-6 animate-fade-in">
-            <div className="print:hidden space-y-6 flex flex-col h-full">
+        // Adjusted height to account for mobile navbar differences
+        <div className="h-[calc(100dvh-100px)] md:h-[calc(100dvh-140px)] flex flex-col gap-4 md:gap-6 animate-fade-in">
+            <div className="print:hidden space-y-4 md:space-y-6 flex flex-col h-full">
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                         <Sparkles className="text-blue-500 fill-blue-100" /> AI Assistant
@@ -239,7 +240,7 @@ const AiAssistant = () => {
                 <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col overflow-hidden relative">
                     
                     {/* Chat Area */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/30">
                         {messages.map((msg) => (
                             <div key={msg.id} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                                 <div className={`w-10 h-10 rounded-full flex-none flex items-center justify-center shadow-sm ${msg.role === 'model' ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>

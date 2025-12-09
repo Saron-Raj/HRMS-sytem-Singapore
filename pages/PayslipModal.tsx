@@ -1,12 +1,9 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { Employee, PayrollRecord, AttendanceRecord, SalaryType, Company } from '../types';
 import { StorageService } from '../services/storage';
 import { X, Download } from 'lucide-react';
-import { eachDayOfInterval, endOfMonth, format, addMonths } from 'date-fns';
-import subMonths from 'date-fns/subMonths';
-import setDate from 'date-fns/setDate';
-import startOfMonth from 'date-fns/startOfMonth';
-import parse from 'date-fns/parse';
+import { eachDayOfInterval, endOfMonth, format, addMonths, subMonths, setDate, startOfMonth, parse } from 'date-fns';
 import { getWorkingDaysInMonth, calculateMonthlyPayroll } from '../utils/calculations';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -329,9 +326,11 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
                             className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer"
                         />
                     </div>
-                    <div className="w-px h-6 bg-slate-300 mx-2"></div>
-                    <button onClick={() => handlePresetRange(6)} className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm">6 Months</button>
-                    <button onClick={() => handlePresetRange(12)} className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm">1 Year</button>
+                    <div className="w-px h-6 bg-slate-300 mx-2 hidden sm:block"></div>
+                    <div className="flex gap-2">
+                        <button onClick={() => handlePresetRange(6)} className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm">6 Months</button>
+                        <button onClick={() => handlePresetRange(12)} className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm">1 Year</button>
+                    </div>
                </div>
 
                {/* Right: View Toggles */}
@@ -358,7 +357,7 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
            </div>
 
            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-100 pt-3">
-               <div className="flex items-center gap-2">
+               <div className="flex flex-wrap items-center justify-center gap-2">
                    <button 
                         onClick={() => handleDownloadPDF('payslip')}
                         disabled={isGenerating}
@@ -381,234 +380,236 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
                         <Download size={16} /> Download Both
                     </button>
                </div>
-               <button onClick={onClose} className="p-2 ml-4 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg transition-colors">
+               <button onClick={onClose} className="p-2 sm:ml-4 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg transition-colors w-full sm:w-auto flex justify-center mt-2 sm:mt-0">
                    <X size={20} />
                </button>
            </div>
        </div>
 
        {/* DOCUMENT PREVIEW */}
-       <div ref={payslipContainerRef} className="pb-20 print:pb-0 print:w-full">
-           {monthlyDataList.map((mItem) => {
-               const monthDate = parse(mItem.month, 'yyyy-MM', new Date());
-               const periodStart = startOfMonth(monthDate);
-               const periodEnd = endOfMonth(monthDate);
-               // Calculate Payment Date: 7th of the NEXT month
-               const paymentDate = setDate(addMonths(monthDate, 1), 7);
-               
-               const hasImage = !!mItem.attachedImage;
-               
-               return (
-               <div 
-                  key={mItem.month} 
-                  className="payslip-page bg-white w-[210mm] min-h-[297mm] mx-auto mb-8 shadow-2xl p-[8mm] relative flex flex-col text-black print:shadow-none print:mb-0 print:break-after-page box-border print:w-full font-sans border border-slate-200 print:border-none"
-               >
-                   {/* HEADER */}
-                   <div className="text-center mb-2">
-                       <h1 className="text-xl font-extrabold uppercase tracking-wide text-black">{company?.name || 'QUALITY M&E PTE LTD'}</h1>
-                       <p className="text-sm font-bold mt-0.5 text-black">Singapore</p>
-                   </div>
-
-                   {/* EMPLOYEE INFO BOX */}
-                   <div className="border-2 border-black mb-2">
-                       <div className="grid grid-cols-2 border-b border-black">
-                           <div className="border-r border-black px-2 py-1.5">
-                               <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">EMPLOYEE NAME / POSITION</div>
-                               <div className="font-bold text-sm uppercase leading-tight">{employee.name} <span className="text-xs font-bold text-slate-700">({employee.position})</span></div>
-                           </div>
-                           <div className="px-2 py-1.5">
-                               <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">FIN NO</div>
-                               <div className="font-bold text-sm uppercase leading-tight">{employee.fin}</div>
-                           </div>
+       <div className="w-full overflow-x-auto flex justify-center bg-slate-100/10 backdrop-blur-sm p-4 rounded-xl">
+           <div ref={payslipContainerRef} className="pb-20 print:pb-0 print:w-full min-w-fit flex flex-col items-center">
+               {monthlyDataList.map((mItem) => {
+                   const monthDate = parse(mItem.month, 'yyyy-MM', new Date());
+                   const periodStart = startOfMonth(monthDate);
+                   const periodEnd = endOfMonth(monthDate);
+                   // Calculate Payment Date: 7th of the NEXT month
+                   const paymentDate = setDate(addMonths(monthDate, 1), 7);
+                   
+                   const hasImage = !!mItem.attachedImage;
+                   
+                   return (
+                   <div 
+                      key={mItem.month} 
+                      className="payslip-page bg-white w-[210mm] min-h-[297mm] mx-auto mb-8 shadow-2xl p-[8mm] relative flex flex-col text-black print:shadow-none print:mb-0 print:break-after-page box-border print:w-full font-sans border border-slate-200 print:border-none flex-none"
+                   >
+                       {/* HEADER */}
+                       <div className="text-center mb-2">
+                           <h1 className="text-xl font-extrabold uppercase tracking-wide text-black">{company?.name || 'QUALITY M&E PTE LTD'}</h1>
+                           <p className="text-sm font-bold mt-0.5 text-black">Singapore</p>
                        </div>
-                       <div className="grid grid-cols-2">
-                           <div className="border-r border-black px-2 py-1.5">
-                               <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">PAY PERIOD</div>
-                               <div className="font-bold text-sm uppercase leading-tight">
-                                   {format(periodStart, 'dd MMM yyyy')} - {format(periodEnd, 'dd MMM yyyy')}
+
+                       {/* EMPLOYEE INFO BOX */}
+                       <div className="border-2 border-black mb-2">
+                           <div className="grid grid-cols-2 border-b border-black">
+                               <div className="border-r border-black px-2 py-1.5">
+                                   <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">EMPLOYEE NAME / POSITION</div>
+                                   <div className="font-bold text-sm uppercase leading-tight">{employee.name} <span className="text-xs font-bold text-slate-700">({employee.position})</span></div>
+                               </div>
+                               <div className="px-2 py-1.5">
+                                   <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">FIN NO</div>
+                                   <div className="font-bold text-sm uppercase leading-tight">{employee.fin}</div>
                                </div>
                            </div>
-                           <div className="px-2 py-1.5">
-                               <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">DATE OF PAYMENT</div>
-                               <div className="font-bold text-sm uppercase leading-tight">
-                                   {format(paymentDate, 'dd/MM/yyyy')}
+                           <div className="grid grid-cols-2">
+                               <div className="border-r border-black px-2 py-1.5">
+                                   <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">PAY PERIOD</div>
+                                   <div className="font-bold text-sm uppercase leading-tight">
+                                       {format(periodStart, 'dd MMM yyyy')} - {format(periodEnd, 'dd MMM yyyy')}
+                                   </div>
+                               </div>
+                               <div className="px-2 py-1.5">
+                                   <div className="text-[10px] font-bold text-slate-500 uppercase leading-none mb-0.5">DATE OF PAYMENT</div>
+                                   <div className="font-bold text-sm uppercase leading-tight">
+                                       {format(paymentDate, 'dd/MM/yyyy')}
+                                   </div>
                                </div>
                            </div>
                        </div>
-                   </div>
 
-                   {/* COLUMNS CONTAINER */}
-                   <div className="flex gap-4 items-start flex-1 min-h-0">
-                       
-                       {/* LEFT: PAYSLIP COLUMN */}
-                       <div className={`payslip-col border-2 border-black h-full flex flex-col transition-all ${viewMode === 'timecard' ? 'hidden' : 'flex'} ${viewMode === 'full' ? 'w-[50%]' : 'w-full'}`}>
-                           <div className="bg-slate-200 text-center font-bold border-b-2 border-black py-1.5 text-sm tracking-widest text-black">PAYSLIP</div>
+                       {/* COLUMNS CONTAINER */}
+                       <div className="flex gap-4 items-start flex-1 min-h-0">
                            
-                           <div className="p-3 text-xs flex-1 flex flex-col leading-relaxed">
-                               <div className="font-bold mb-4 uppercase text-[10px] tracking-wide text-slate-700 border-b border-black pb-1">MODE: BANK TRANSFER</div>
-
-                               {/* A. BASIC PAY */}
-                               <div className="flex justify-between items-end mb-1">
-                                   <span className="font-bold">BASIC PAY (A)</span>
-                                   <span className="font-bold text-lg w-24 text-right">${mItem.payroll.basicPayTotal.toFixed(2)}</span>
-                               </div>
-                               <div className="border-b border-black mb-3"></div>
-
-                               {/* B. ALLOWANCES */}
-                               <div className="font-bold mb-1">ALLOWANCES (B)</div>
-                               <div className="pl-2 space-y-2 mb-2">
-                                   <div className="flex justify-between items-end">
-                                       <span>Transport</span>
-                                       <span className="w-24 text-right">{mItem.payroll.transportAllowance ? `$${mItem.payroll.transportAllowance.toFixed(2)}` : '-'}</span>
-                                   </div>
-                                   <div className="flex justify-between items-end">
-                                       <span>Lunch Hrs Working Pay ($1/hr)</span>
-                                       <span className="w-24 text-right">${mItem.payroll.lunchAllowanceTotal.toFixed(2)}</span>
-                                   </div>
-                                   <div className="flex justify-between items-end">
-                                       <span>Other Allowances</span>
-                                       <span className="w-24 text-right">{mItem.payroll.otherAllowances ? `$${mItem.payroll.otherAllowances.toFixed(2)}` : '-'}</span>
-                                   </div>
-                               </div>
-                               <div className="border-b border-black mb-3"></div>
-
-                               {/* C. DEDUCTIONS */}
-                               <div className="font-bold mb-1">DEDUCTIONS (C)</div>
-                               <div className="pl-2 space-y-2 mb-2">
-                                   <div className="flex justify-between items-end">
-                                       <span>Housing / Amenities</span>
-                                       <span className="w-24 text-right">{mItem.payroll.housingDeduction ? `$${mItem.payroll.housingDeduction.toFixed(2)}` : '-'}</span>
-                                   </div>
-                                   <div className="flex justify-between items-end">
-                                       <span>Salary Advance</span>
-                                       <span className="w-24 text-right">{mItem.payroll.advanceDeduction ? `$${mItem.payroll.advanceDeduction.toFixed(2)}` : '-'}</span>
-                                   </div>
-                               </div>
-                               <div className="border-b border-black mb-3"></div>
-
-                               {/* D. OVERTIME & ATTENDANCE */}
-                               <div className="font-bold mb-1">OVERTIME & ATTENDANCE (D)</div>
-                               <div className="pl-2 space-y-2 mb-2">
-                                   <div className="flex justify-between items-end">
-                                       <span>OT Pay ({mItem.payroll.totalOtHours}h)</span>
-                                       <span className="w-24 text-right">${mItem.payroll.otPayTotal.toFixed(2)}</span>
-                                   </div>
-                                   <div className="flex justify-between items-end text-slate-600">
-                                       <span>MC ({mItem.payroll.mcDays} days)</span>
-                                       <span className="w-24 text-right">-</span>
-                                   </div>
-                                   <div className="flex justify-between items-end text-slate-600">
-                                       <span>OFF ({mItem.payroll.offDays} days)</span>
-                                       <span className="w-24 text-right">-</span>
-                                   </div>
-                               </div>
-                               <div className="border-b border-black mb-3"></div>
-
-                               {/* E. HOLIDAY PAY */}
-                               <div className="font-bold mb-1">HOLIDAY PAY (E)</div>
-                               <div className="pl-2 space-y-2 mb-2">
-                                   <div className="flex justify-between items-end">
-                                       <span>Holiday/Sun Pay ({mItem.payroll.totalHolidayDays}d)</span>
-                                       <span className="w-24 text-right">${mItem.payroll.holidayPayTotal.toFixed(2)}</span>
-                                   </div>
-                               </div>
+                           {/* LEFT: PAYSLIP COLUMN */}
+                           <div className={`payslip-col border-2 border-black h-full flex flex-col transition-all ${viewMode === 'timecard' ? 'hidden' : 'flex'} ${viewMode === 'full' ? 'w-[50%]' : 'w-full'}`}>
+                               <div className="bg-slate-200 text-center font-bold border-b-2 border-black py-1.5 text-sm tracking-widest text-black">PAYSLIP</div>
                                
-                               {/* NET PAY BOX */}
-                               {/* Positioning: If in full view with image, use mt-4 (top). If separate view or no image, use mt-auto (bottom). */}
-                               <div className={`net-pay-section border-2 border-black p-2 bg-slate-50 ${hasImage && viewMode === 'full' ? 'mt-4' : 'mt-auto'}`}>
-                                   <div className="flex justify-between items-center">
-                                       <span className="font-extrabold text-sm uppercase">NET PAY (A+B-C+D+E)</span>
-                                       <span className="font-extrabold text-xl">${mItem.payroll.netSalary.toFixed(2)}</span>
-                                   </div>
-                               </div>
+                               <div className="p-3 text-xs flex-1 flex flex-col leading-relaxed">
+                                   <div className="font-bold mb-4 uppercase text-[10px] tracking-wide text-slate-700 border-b border-black pb-1">MODE: BANK TRANSFER</div>
 
-                               {/* ATTACHED IMAGE (Manual Time Card) */}
-                               {/* Only render in DOM if it exists. Hide via CSS if not in full view so we can remove/unhide during PDF generation */}
-                               {mItem.attachedImage && (
-                                   <div className={`attached-image-section mt-4 flex-1 flex items-center justify-center p-1 border border-dashed border-slate-200 min-h-[80px] ${viewMode !== 'full' ? 'hidden' : ''}`}>
-                                       <img src={mItem.attachedImage} className="w-full h-full object-contain max-h-[150px]" alt="Attached Card" />
+                                   {/* A. BASIC PAY */}
+                                   <div className="flex justify-between items-end mb-1">
+                                       <span className="font-bold">BASIC PAY (A)</span>
+                                       <span className="font-bold text-lg w-24 text-right">${mItem.payroll.basicPayTotal.toFixed(2)}</span>
                                    </div>
-                               )}
+                                   <div className="border-b border-black mb-3"></div>
+
+                                   {/* B. ALLOWANCES */}
+                                   <div className="font-bold mb-1">ALLOWANCES (B)</div>
+                                   <div className="pl-2 space-y-2 mb-2">
+                                       <div className="flex justify-between items-end">
+                                           <span>Transport</span>
+                                           <span className="w-24 text-right">{mItem.payroll.transportAllowance ? `$${mItem.payroll.transportAllowance.toFixed(2)}` : '-'}</span>
+                                       </div>
+                                       <div className="flex justify-between items-end">
+                                           <span>Lunch Hrs Working Pay ($1/hr)</span>
+                                           <span className="w-24 text-right">${mItem.payroll.lunchAllowanceTotal.toFixed(2)}</span>
+                                       </div>
+                                       <div className="flex justify-between items-end">
+                                           <span>Other Allowances</span>
+                                           <span className="w-24 text-right">{mItem.payroll.otherAllowances ? `$${mItem.payroll.otherAllowances.toFixed(2)}` : '-'}</span>
+                                       </div>
+                                   </div>
+                                   <div className="border-b border-black mb-3"></div>
+
+                                   {/* C. DEDUCTIONS */}
+                                   <div className="font-bold mb-1">DEDUCTIONS (C)</div>
+                                   <div className="pl-2 space-y-2 mb-2">
+                                       <div className="flex justify-between items-end">
+                                           <span>Housing / Amenities</span>
+                                           <span className="w-24 text-right">{mItem.payroll.housingDeduction ? `$${mItem.payroll.housingDeduction.toFixed(2)}` : '-'}</span>
+                                       </div>
+                                       <div className="flex justify-between items-end">
+                                           <span>Salary Advance</span>
+                                           <span className="w-24 text-right">{mItem.payroll.advanceDeduction ? `$${mItem.payroll.advanceDeduction.toFixed(2)}` : '-'}</span>
+                                       </div>
+                                   </div>
+                                   <div className="border-b border-black mb-3"></div>
+
+                                   {/* D. OVERTIME & ATTENDANCE */}
+                                   <div className="font-bold mb-1">OVERTIME & ATTENDANCE (D)</div>
+                                   <div className="pl-2 space-y-2 mb-2">
+                                       <div className="flex justify-between items-end">
+                                           <span>OT Pay ({mItem.payroll.totalOtHours}h)</span>
+                                           <span className="w-24 text-right">${mItem.payroll.otPayTotal.toFixed(2)}</span>
+                                       </div>
+                                       <div className="flex justify-between items-end text-slate-600">
+                                           <span>MC ({mItem.payroll.mcDays} days)</span>
+                                           <span className="w-24 text-right">-</span>
+                                       </div>
+                                       <div className="flex justify-between items-end text-slate-600">
+                                           <span>OFF ({mItem.payroll.offDays} days)</span>
+                                           <span className="w-24 text-right">-</span>
+                                       </div>
+                                   </div>
+                                   <div className="border-b border-black mb-3"></div>
+
+                                   {/* E. HOLIDAY PAY */}
+                                   <div className="font-bold mb-1">HOLIDAY PAY (E)</div>
+                                   <div className="pl-2 space-y-2 mb-2">
+                                       <div className="flex justify-between items-end">
+                                           <span>Holiday/Sun Pay ({mItem.payroll.totalHolidayDays}d)</span>
+                                           <span className="w-24 text-right">${mItem.payroll.holidayPayTotal.toFixed(2)}</span>
+                                       </div>
+                                   </div>
+                                   
+                                   {/* NET PAY BOX */}
+                                   {/* Positioning: If in full view with image, use mt-4 (top). If separate view or no image, use mt-auto (bottom). */}
+                                   <div className={`net-pay-section border-2 border-black p-2 bg-slate-50 ${hasImage && viewMode === 'full' ? 'mt-4' : 'mt-auto'}`}>
+                                       <div className="flex justify-between items-center">
+                                           <span className="font-extrabold text-sm uppercase">NET PAY (A+B-C+D+E)</span>
+                                           <span className="font-extrabold text-xl">${mItem.payroll.netSalary.toFixed(2)}</span>
+                                       </div>
+                                   </div>
+
+                                   {/* ATTACHED IMAGE (Manual Time Card) */}
+                                   {/* Only render in DOM if it exists. Hide via CSS if not in full view so we can remove/unhide during PDF generation */}
+                                   {mItem.attachedImage && (
+                                       <div className={`attached-image-section mt-4 flex-1 flex items-center justify-center p-1 border border-dashed border-slate-200 min-h-[80px] ${viewMode !== 'full' ? 'hidden' : ''}`}>
+                                           <img src={mItem.attachedImage} className="w-full h-full object-contain max-h-[150px]" alt="Attached Card" />
+                                       </div>
+                                   )}
+                               </div>
+                           </div>
+
+                           {/* RIGHT: TIME CARD COLUMN */}
+                           <div className={`timecard-col border-2 border-black flex flex-col h-full transition-all ${viewMode === 'payslip' ? 'hidden' : 'flex'} ${viewMode === 'full' ? 'w-[50%]' : 'w-full'}`}>
+                                <div className="bg-slate-200 text-center font-bold border-b-2 border-black py-1.5 text-sm tracking-widest text-black">TIME CARD</div>
+                                <table className="w-full text-[10px] text-center leading-none border-collapse">
+                                   <thead>
+                                       <tr className="border-b border-black bg-slate-100 h-6">
+                                           <th className="border-r border-black w-6 font-bold">No</th>
+                                           <th className="border-r border-black w-14 font-bold">Date</th>
+                                           <th className="border-r border-black w-8 font-bold">Day</th>
+                                           <th className="border-r border-black w-10 font-bold">IN</th>
+                                           <th className="border-r border-black w-10 font-bold">OUT</th>
+                                           <th className="border-r border-black w-8 font-bold">OT</th>
+                                           <th className="border-r border-black w-6 font-bold">Lun</th>
+                                           <th className="font-bold">Site/Rem</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                       {renderTimeCardRows(mItem.dailyRecords)}
+                                   </tbody>
+                                </table>
+                                <div className="mt-auto border-t-2 border-black p-2 flex justify-between text-[10px] font-bold bg-slate-100">
+                                    <span className="uppercase">TOTALS</span>
+                                    <span>Work Days: {mItem.payroll.totalDaysWorked}</span>
+                                    <span>OT Hrs: {mItem.payroll.totalOtHours}</span>
+                                    <span>Lunch: {mItem.payroll.totalLunchHours}</span>
+                                </div>
                            </div>
                        </div>
 
-                       {/* RIGHT: TIME CARD COLUMN */}
-                       <div className={`timecard-col border-2 border-black flex flex-col h-full transition-all ${viewMode === 'payslip' ? 'hidden' : 'flex'} ${viewMode === 'full' ? 'w-[50%]' : 'w-full'}`}>
-                            <div className="bg-slate-200 text-center font-bold border-b-2 border-black py-1.5 text-sm tracking-widest text-black">TIME CARD</div>
-                            <table className="w-full text-[10px] text-center leading-none border-collapse">
-                               <thead>
-                                   <tr className="border-b border-black bg-slate-100 h-6">
-                                       <th className="border-r border-black w-6 font-bold">No</th>
-                                       <th className="border-r border-black w-14 font-bold">Date</th>
-                                       <th className="border-r border-black w-8 font-bold">Day</th>
-                                       <th className="border-r border-black w-10 font-bold">IN</th>
-                                       <th className="border-r border-black w-10 font-bold">OUT</th>
-                                       <th className="border-r border-black w-8 font-bold">OT</th>
-                                       <th className="border-r border-black w-6 font-bold">Lun</th>
-                                       <th className="font-bold">Site/Rem</th>
-                                   </tr>
-                               </thead>
-                               <tbody>
-                                   {renderTimeCardRows(mItem.dailyRecords)}
-                               </tbody>
-                            </table>
-                            <div className="mt-auto border-t-2 border-black p-2 flex justify-between text-[10px] font-bold bg-slate-100">
-                                <span className="uppercase">TOTALS</span>
-                                <span>Work Days: {mItem.payroll.totalDaysWorked}</span>
-                                <span>OT Hrs: {mItem.payroll.totalOtHours}</span>
-                                <span>Lunch: {mItem.payroll.totalLunchHours}</span>
+                       {/* FOOTER SIGNATURES - BOXED MODEL (ADJUSTED HEIGHTS) */}
+                       <div className="mt-[5px] border-2 border-black flex text-xs flex-none">
+                            {/* Left Side: Authorized Sign & Stamp */}
+                            <div className="flex-1 border-r-2 border-black flex flex-col">
+                                {/* Top Section: Authorized Signature - HEIGHT INCREASED FOR 100px IMAGES */}
+                                <div className="px-2 pt-1 pb-1 flex-1 relative flex flex-col justify-between h-[120px]">
+                                     <div className="font-bold text-[10px] text-slate-500 uppercase leading-none">AUTHORIZED SIGNATURE & STAMP</div>
+                                     <div className="flex-1 flex items-end justify-center gap-4">
+                                          {/* Signature */}
+                                          {company?.signature && (
+                                              <img 
+                                                  src={company.signature} 
+                                                  className="max-h-[100px] w-auto object-contain mix-blend-multiply" 
+                                                  alt="Signature" 
+                                              />
+                                          )}
+                                          {/* Stamp */}
+                                          {company?.stamp && (
+                                              <img 
+                                                  src={company.stamp} 
+                                                  className="max-h-[100px] w-auto object-contain mix-blend-multiply opacity-90" 
+                                                  alt="Stamp" 
+                                              />
+                                          )}
+                                     </div>
+                                </div>
+                                {/* Bottom Section: Employer Text - HEIGHT 23px */}
+                                <div className="border-t-2 border-black h-[23px] flex items-center justify-center bg-slate-50">
+                                    <span className="font-bold text-xs uppercase text-black">EMPLOYER</span>
+                                </div>
+                            </div>
+
+                            {/* Right Side: Employee Signature */}
+                            <div className="flex-1 flex flex-col">
+                                 {/* Top Section: Acknowledged By - HEIGHT INCREASED TO MATCH */}
+                                <div className="px-2 pt-1 pb-1 flex-1 relative h-[120px]">
+                                     <div className="font-bold text-[10px] text-slate-500 uppercase leading-none">ACKNOWLEDGED BY</div>
+                                </div>
+                                 {/* Bottom Section: Employee Signature Text - HEIGHT 23px */}
+                                <div className="border-t-2 border-black h-[23px] flex items-center justify-center bg-slate-50">
+                                    <span className="font-bold text-xs uppercase text-black">EMPLOYEE SIGNATURE</span>
+                                </div>
                             </div>
                        </div>
+
                    </div>
-
-                   {/* FOOTER SIGNATURES - BOXED MODEL (ADJUSTED HEIGHTS) */}
-                   <div className="mt-[5px] border-2 border-black flex text-xs flex-none">
-                        {/* Left Side: Authorized Sign & Stamp */}
-                        <div className="flex-1 border-r-2 border-black flex flex-col">
-                            {/* Top Section: Authorized Signature - HEIGHT INCREASED FOR 100px IMAGES */}
-                            <div className="px-2 pt-1 pb-1 flex-1 relative flex flex-col justify-between h-[120px]">
-                                 <div className="font-bold text-[10px] text-slate-500 uppercase leading-none">AUTHORIZED SIGNATURE & STAMP</div>
-                                 <div className="flex-1 flex items-end justify-center gap-4">
-                                      {/* Signature */}
-                                      {company?.signature && (
-                                          <img 
-                                              src={company.signature} 
-                                              className="max-h-[100px] w-auto object-contain mix-blend-multiply" 
-                                              alt="Signature" 
-                                          />
-                                      )}
-                                      {/* Stamp */}
-                                      {company?.stamp && (
-                                          <img 
-                                              src={company.stamp} 
-                                              className="max-h-[100px] w-auto object-contain mix-blend-multiply opacity-90" 
-                                              alt="Stamp" 
-                                          />
-                                      )}
-                                 </div>
-                            </div>
-                            {/* Bottom Section: Employer Text - HEIGHT 23px */}
-                            <div className="border-t-2 border-black h-[23px] flex items-center justify-center bg-slate-50">
-                                <span className="font-bold text-xs uppercase text-black">EMPLOYER</span>
-                            </div>
-                        </div>
-
-                        {/* Right Side: Employee Signature */}
-                        <div className="flex-1 flex flex-col">
-                             {/* Top Section: Acknowledged By - HEIGHT INCREASED TO MATCH */}
-                            <div className="px-2 pt-1 pb-1 flex-1 relative h-[120px]">
-                                 <div className="font-bold text-[10px] text-slate-500 uppercase leading-none">ACKNOWLEDGED BY</div>
-                            </div>
-                             {/* Bottom Section: Employee Signature Text - HEIGHT 23px */}
-                            <div className="border-t-2 border-black h-[23px] flex items-center justify-center bg-slate-50">
-                                <span className="font-bold text-xs uppercase text-black">EMPLOYEE SIGNATURE</span>
-                            </div>
-                        </div>
-                   </div>
-
-               </div>
-               );
-           })}
+                   );
+               })}
+           </div>
        </div>
     </div>
   );

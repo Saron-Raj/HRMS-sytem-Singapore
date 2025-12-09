@@ -4,9 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { Employee, PayrollAdjustments, PayrollHistoryLog } from '../types';
 import { ArrowLeft, Save, Trash2, ImageIcon, History, FileEdit, Loader2, Wallet, TrendingDown } from 'lucide-react';
-import { format } from 'date-fns';
-import parse from 'date-fns/parse';
-import parseISO from 'date-fns/parseISO';
+import { format, parse, parseISO } from 'date-fns';
 
 const PayrollAdjustmentsPage = () => {
   const { employeeId, month } = useParams();
@@ -140,16 +138,16 @@ const PayrollAdjustmentsPage = () => {
             </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 flex w-fit">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 flex w-full md:w-fit overflow-x-auto">
             <button 
                 onClick={() => setAdjModalTab('edit')}
-                className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center gap-2 ${adjModalTab === 'edit' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                className={`flex-1 md:flex-none px-6 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${adjModalTab === 'edit' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
             >
                 <FileEdit size={16} /> Edit Values
             </button>
             <button 
                 onClick={() => setAdjModalTab('history')}
-                className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center gap-2 ${adjModalTab === 'history' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                className={`flex-1 md:flex-none px-6 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap ${adjModalTab === 'history' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
             >
                 <History size={16} /> Change History
             </button>
@@ -157,7 +155,7 @@ const PayrollAdjustmentsPage = () => {
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             {adjModalTab === 'edit' && (
-                <div className="p-8 space-y-8 max-w-5xl mx-auto">
+                <div className="p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* ALLOWANCES SECTION */}

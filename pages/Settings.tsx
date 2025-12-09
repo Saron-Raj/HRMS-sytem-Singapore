@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Company, AppSettings, Holiday } from '../types';
 import { Trash2, CheckCircle, Image as ImageIcon, Plus, Building2, Cloud, Calendar, DollarSign, RotateCcw, UploadCloud } from 'lucide-react';
-import { format } from 'date-fns';
-import parseISO from 'date-fns/parseISO';
+import { format, parseISO } from 'date-fns';
 import { useLocation } from 'react-router-dom';
 
 const ImageUploader = ({ label, value, onChange, onRemove, helperText }: any) => {
@@ -207,7 +206,7 @@ const Settings = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="h-full"><div className="flex items-center gap-3 mb-4 px-2"><div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm ring-4 ring-blue-50">2</div><h3 className="font-bold text-slate-800">Logo</h3></div><ImageUploader label="Company Logo" value={formData.logo} onChange={(val: any) => handleUpdateField('logo', val)} onRemove={() => handleUpdateField('logo', undefined)} helperText="Displayed on Payslip Header" /></div>
+                        <div className="h-full"><div className="flex items-center gap-3 mb-4 px-2"><div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm ring-4 ring-blue-50">3</div><h3 className="font-bold text-slate-800">Logo</h3></div><ImageUploader label="Company Logo" value={formData.logo} onChange={(val: any) => handleUpdateField('logo', val)} onRemove={() => handleUpdateField('logo', undefined)} helperText="Displayed on Payslip Header" /></div>
                         <div className="h-full"><div className="flex items-center gap-3 mb-4 px-2"><div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm ring-4 ring-blue-50">3</div><h3 className="font-bold text-slate-800">Stamp</h3></div><ImageUploader label="Company Stamp" value={formData.stamp} onChange={(val: any) => handleUpdateField('stamp', val)} onRemove={() => handleUpdateField('stamp', undefined)} helperText="Overlays the Signature area" /></div>
                         <div className="h-full"><div className="flex items-center gap-3 mb-4 px-2"><div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm ring-4 ring-blue-50">4</div><h3 className="font-bold text-slate-800">Signature</h3></div><ImageUploader label="Auth. Signature" value={formData.signature} onChange={(val: any) => handleUpdateField('signature', val)} onRemove={() => handleUpdateField('signature', undefined)} helperText="Director / HR Manager Sign" /></div>
                     </div>

@@ -1,9 +1,6 @@
 import { Employee, SalaryType, WORK_HOURS_END_DAILY, OT_START_FIXED, PayrollRecord, AttendanceRecord, PayrollAdjustments, AppSettings } from '../types';
 import { WORKING_DAYS_PER_MONTH, HOURS_PER_DAY, OT_MULTIPLIER } from '../constants';
-import { differenceInMinutes, format, endOfMonth, eachDayOfInterval, isSunday } from 'date-fns';
-import parse from 'date-fns/parse';
-import startOfMonth from 'date-fns/startOfMonth';
-import parseISO from 'date-fns/parseISO';
+import { differenceInMinutes, format, endOfMonth, eachDayOfInterval, isSunday, parse, startOfMonth, parseISO } from 'date-fns';
 
 /**
  * Calculates OT Hours based on employee type and checkout time.
