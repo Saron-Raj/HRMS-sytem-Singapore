@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QUALITY M&E-HRMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              signature: ['"Great Vibes"', 'cursive'],
+            },
+            colors: {
+              primary: '#0F172A', // Slate 900
+              secondary: '#334155', // Slate 700
+              accent: '#3B82F6', // Blue 500
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: #F8FAFC; 
+        color: #1E293B;
+      }
+      
+      /* Hide Scrollbar Globally */
+      ::-webkit-scrollbar {
+        display: none;
+      }
+      * {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+
+      /* Hide arrows/spinners for number inputs */
+      input[type=number]::-webkit-inner-spin-button, 
+      input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+
+      @media print {
+        @page { 
+          margin: 0; 
+          size: A4 portrait; 
+        }
+        body { 
+          background: white !important; 
+          color: #000 !important;
+          -webkit-print-color-adjust: exact; 
+          print-color-adjust: exact;
+        }
+        .no-print { display: none !important; }
+        .print-only { display: block !important; }
+        
+        /* Force black text and borders for high contrast printing */
+        * {
+          color: #000 !important;
+          border-color: #000 !important;
+        }
+        /* Ensure backgrounds that should be white are white */
+        .print-bg-white {
+          background-color: white !important;
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.0",
+    "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "date-fns/": "https://aistudiocdn.com/date-fns@^4.1.0/",
+    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.4",
+    "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/package/xlsx.mjs",
+    "jspdf-autotable": "https://aistudiocdn.com/jspdf-autotable@^3.8.2",
+    "jszip": "https://aistudiocdn.com/jszip@^3.10.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
+    "@emailjs/browser": "https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/+esm"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
