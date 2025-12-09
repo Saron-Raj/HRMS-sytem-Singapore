@@ -4,11 +4,11 @@ import { api } from '../services/api';
 import { Employee, AttendanceRecord, AttendanceStatus, AppSettings } from '../types';
 import { calculateDailyTotal, calculateOtHours } from '../utils/calculations';
 import { format, addDays, isSunday, subDays, parseISO } from 'date-fns';
-import { Calendar, CheckCircle, ChevronLeft, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
+import { Calendar, CheckCircle, ChevronLeft, ChevronRight, ChevronDown, Loader2, Clock, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // --- Custom TimePicker Component ---
-const TimePicker = ({ value, onChange, className }: { value: string, onChange: (val: string) => void, className?: string }) => {
+const TimePicker = ({ value, onChange, className, label }: { value: string, onChange: (val: string) => void, className?: string, label?: string }) => {
     // 24h HH:mm -> 12h hh:mm a
     const to12h = (time24: string) => {
         if (!time24) return { h: '', m: '', p: 'AM' };
@@ -60,35 +60,38 @@ const TimePicker = ({ value, onChange, className }: { value: string, onChange: (
     };
 
     return (
-        <div className={`flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 shadow-sm w-full min-w-[130px] ${className}`}>
-            <input 
-                type="text" 
-                className="w-7 text-center text-sm font-bold outline-none bg-transparent p-0 placeholder:text-slate-300" 
-                placeholder="HH"
-                value={localState.h}
-                onChange={e => updateH(e.target.value)}
-                onBlur={() => {
-                   if(localState.h.length === 1 && parseInt(localState.h) > 0) updateH(localState.h.padStart(2, '0'));
-                }}
-            />
-            <span className="text-slate-400 font-bold text-xs">:</span>
-            <input 
-                type="text" 
-                className="w-7 text-center text-sm font-bold outline-none bg-transparent p-0 placeholder:text-slate-300" 
-                placeholder="MM"
-                value={localState.m}
-                onChange={e => updateM(e.target.value)}
-                onBlur={() => {
-                   if(localState.m.length === 1) updateM(localState.m.padStart(2, '0'));
-                }}
-            />
-            <button
-                type="button"
-                onClick={() => updateP(localState.p === 'AM' ? 'PM' : 'AM')}
-                className={`text-[10px] font-bold px-2 py-0.5 rounded ml-auto cursor-pointer select-none transition-colors border border-transparent hover:border-slate-200 ${localState.p === 'AM' ? 'text-orange-600 bg-orange-50 hover:bg-orange-100' : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'}`}
-            >
-                {localState.p}
-            </button>
+        <div className={`flex flex-col ${className}`}>
+            {label && <span className="text-[10px] font-bold text-slate-400 uppercase mb-1">{label}</span>}
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1.5 shadow-sm w-full">
+                <input 
+                    type="text" 
+                    className="w-7 text-center text-sm font-bold outline-none bg-transparent p-0 placeholder:text-slate-300" 
+                    placeholder="HH"
+                    value={localState.h}
+                    onChange={e => updateH(e.target.value)}
+                    onBlur={() => {
+                    if(localState.h.length === 1 && parseInt(localState.h) > 0) updateH(localState.h.padStart(2, '0'));
+                    }}
+                />
+                <span className="text-slate-400 font-bold text-xs">:</span>
+                <input 
+                    type="text" 
+                    className="w-7 text-center text-sm font-bold outline-none bg-transparent p-0 placeholder:text-slate-300" 
+                    placeholder="MM"
+                    value={localState.m}
+                    onChange={e => updateM(e.target.value)}
+                    onBlur={() => {
+                    if(localState.m.length === 1) updateM(localState.m.padStart(2, '0'));
+                    }}
+                />
+                <button
+                    type="button"
+                    onClick={() => updateP(localState.p === 'AM' ? 'PM' : 'AM')}
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded ml-auto cursor-pointer select-none transition-colors border border-transparent hover:border-slate-200 ${localState.p === 'AM' ? 'text-orange-600 bg-orange-50 hover:bg-orange-100' : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'}`}
+                >
+                    {localState.p}
+                </button>
+            </div>
         </div>
     );
 };
@@ -189,29 +192,29 @@ const Attendance = () => {
     setLastSaved(new Date());
   };
 
-  const inputClass = "px-3 py-2 w-32 text-center rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-bold text-slate-800 transition-all shadow-sm";
+  const inputClass = "px-3 py-2 w-full text-center rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-bold text-slate-800 transition-all shadow-sm";
   const currentHoliday = (settings.publicHolidays || []).find(h => h.date === selectedDate);
   const isHolidayDate = !!currentHoliday;
   const isSundayDate = isSunday(parseISO(selectedDate));
   
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-900">Attendance</h2>
           <p className="text-slate-500 mt-1">Editing: <span className="font-bold text-blue-600">{format(parseISO(selectedDate), 'EEEE, dd MMM yyyy')}</span></p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto">
             <div className="flex items-center bg-white p-1 rounded-xl shadow-sm border border-slate-200 w-full sm:w-auto">
                 <button onClick={handlePrevDay} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"><ChevronLeft size={20} /></button>
-                <div className="px-2 border-x border-slate-100 flex items-center relative flex-1 sm:flex-none">
+                <div className="px-2 border-x border-slate-100 flex items-center relative flex-1 sm:flex-none justify-center">
                     <Calendar size={16} className="text-blue-500 absolute left-3 pointer-events-none" />
                     <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="pl-9 pr-2 py-1 outline-none bg-white text-black font-bold text-sm cursor-pointer w-full sm:w-[140px]" />
                 </div>
                 <button onClick={handleNextDay} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"><ChevronRight size={20} /></button>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-200 text-xs font-bold shadow-sm whitespace-nowrap">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-200 text-xs font-bold shadow-sm whitespace-nowrap w-full sm:w-auto justify-center">
                 <CheckCircle size={14} /> {lastSaved ? `Auto-Saved ${format(lastSaved, 'HH:mm:ss')}` : 'Ready'}
             </div>
         </div>
@@ -227,9 +230,9 @@ const Attendance = () => {
           </div>
       )}
 
-      <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+      {/* DESKTOP TABLE VIEW */}
+      <div className="hidden xl:block bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
-          {/* Added min-w-[1200px] to force horizontal scrolling on smaller screens so columns don't squash */}
           <table className="w-full text-sm text-left min-w-[1200px]">
             <thead className="bg-slate-50/50 text-slate-500 uppercase text-xs font-bold tracking-wider">
               <tr>
@@ -295,6 +298,74 @@ const Attendance = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* MOBILE CARD VIEW */}
+      <div className="xl:hidden flex flex-col gap-4">
+        {isLoading ? (
+            <div className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500"/></div>
+        ) : employees.length === 0 ? (
+            <div className="p-8 text-center text-slate-400 bg-white rounded-xl">No active employees found.</div>
+        ) : (
+            attendance.map((record) => {
+                const emp = employees.find(e => e.id === record.employeeId);
+                if (!emp) return null;
+                return (
+                    <div key={record.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4 relative">
+                        {/* Header: Name and Pay */}
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <button onClick={() => navigate(`/attendance/${emp.id}`)} className="font-bold text-slate-900 text-base hover:text-blue-600 underline-offset-2 hover:underline">{emp.name}</button>
+                                <div className="text-xs text-slate-500 mt-0.5">{emp.position}</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="font-bold text-slate-900 bg-slate-100 px-2 py-1 rounded text-sm">${record.calculatedDailyPay.toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        {/* Row 1: Time Pickers */}
+                        <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                             <TimePicker 
+                                label="In Time"
+                                value={record.startTime || ''} 
+                                onChange={(val) => updateRecord(emp.id, 'startTime', val)} 
+                            />
+                             <TimePicker 
+                                label="Out Time"
+                                value={record.endTime || ''} 
+                                onChange={(val) => updateRecord(emp.id, 'endTime', val)} 
+                            />
+                        </div>
+
+                        {/* Row 2: OT / Lunch / Site */}
+                        <div className="grid grid-cols-3 gap-3">
+                             <div>
+                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">OT (Hrs)</label>
+                                 <input type="number" step="0.5" min="0" className={inputClass} value={record.otHours} onChange={(e) => updateRecord(emp.id, 'otHours', e.target.value)} />
+                             </div>
+                             <div>
+                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Lunch</label>
+                                 <select className={`${inputClass} appearance-none`} value={record.lunchHours !== undefined ? record.lunchHours : 0} onChange={(e) => updateRecord(emp.id, 'lunchHours', e.target.value)}>
+                                    <option value="0">0h</option><option value="1">1h</option>
+                                </select>
+                             </div>
+                             <div>
+                                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Status</label>
+                                 <select className={`w-full appearance-none cursor-pointer px-2 py-2 rounded-xl border font-bold text-xs outline-none transition-all shadow-sm ${record.remarks === 'MC' ? 'bg-amber-50 text-amber-700 border-amber-200' : record.remarks === 'OFF' ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-white text-slate-800 border-slate-200'}`} value={record.remarks || ''} onChange={(e) => updateRecord(emp.id, 'remarks', e.target.value)}>
+                                    <option value="" className="text-slate-800">Working</option><option value="MC" className="text-amber-600">MC</option><option value="OFF" className="text-slate-600">OFF</option><option value="Other" className="text-blue-600">Other</option>
+                                </select>
+                             </div>
+                        </div>
+
+                        {/* Row 3: Site Location */}
+                        <div>
+                             <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block flex items-center gap-1"><MapPin size={10} /> Site Location</label>
+                             <input type="text" className={`${inputClass} text-left w-full`} placeholder="Site Name..." value={record.siteLocation || ''} onChange={(e) => updateRecord(emp.id, 'siteLocation', e.target.value)} />
+                        </div>
+                    </div>
+                )
+            })
+        )}
       </div>
     </div>
   );

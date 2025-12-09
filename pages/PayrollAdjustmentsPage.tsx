@@ -120,7 +120,7 @@ const PayrollAdjustmentsPage = () => {
   if (!employee || !editingAdj || !month) return null;
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
         <div className="flex items-center gap-4 border-b border-slate-200 pb-4">
             <button 
                 onClick={() => navigate('/payroll')}
@@ -273,18 +273,18 @@ const PayrollAdjustmentsPage = () => {
             )}
 
             {adjModalTab === 'edit' && (
-                <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0">
+                <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-end gap-3 sticky bottom-0">
                     <button 
                         onClick={() => navigate('/payroll')} 
                         disabled={loading}
-                        className="px-6 py-3 text-slate-500 hover:bg-white rounded-xl text-sm font-bold border border-transparent hover:border-slate-200 transition-all"
+                        className="px-6 py-3 text-slate-500 hover:bg-white rounded-xl text-sm font-bold border border-transparent hover:border-slate-200 transition-all w-full sm:w-auto"
                     >
                         Cancel
                     </button>
                     <button 
                         onClick={saveAdjustments} 
                         disabled={loading}
-                        className="px-8 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 flex items-center gap-2 transition-all disabled:opacity-50"
+                        className="px-8 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 transition-all disabled:opacity-50 w-full sm:w-auto"
                     >
                         {loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                         Save Changes

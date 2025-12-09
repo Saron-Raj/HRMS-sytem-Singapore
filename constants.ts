@@ -1,6 +1,6 @@
 
 
-import { Users, LayoutDashboard, Clock, FolderOpen, Settings, DollarSign, LogOut, Bot, Receipt } from 'lucide-react';
+import { Users, LayoutDashboard, Clock, FolderOpen, Settings, DollarSign, LogOut, Bot, Receipt, Briefcase } from 'lucide-react';
 
 export const APP_NAME = "QUALITY M&E-HRMS";
 export const CURRENCY = "SGD";
@@ -12,6 +12,7 @@ export const NAV_ITEMS = [
   { name: 'Payroll', path: '/payroll', icon: DollarSign },
   { name: 'Expenses', path: '/expenses', icon: Receipt },
   { name: 'Worker Documents', path: '/reports', icon: FolderOpen },
+  { name: 'Office Documents', path: '/office-documents', icon: Briefcase },
   { name: 'AI Assistant', path: '/ai-assistant', icon: Bot },
 ];
 

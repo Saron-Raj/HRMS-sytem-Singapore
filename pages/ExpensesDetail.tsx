@@ -1,9 +1,11 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { api } from '../services/api';
 import { StorageService } from '../services/storage';
 import { SiteLogRecord } from '../types';
-import { ArrowLeft, Save, Users, Construction, CheckSquare, Trash2, MapPin } from 'lucide-react';
+import { ArrowLeft, Save, Users, Construction, CheckSquare, Trash2, MapPin, Loader2 } from 'lucide-react';
 import { format, differenceInMinutes, parse } from 'date-fns';
 
 const SINGAPORE_LOCATIONS = [
@@ -22,6 +24,8 @@ const ExpensesDetail = () => {
     const navigate = useNavigate();
     const isNew = !id || id === 'new';
     
+    const [isSaving, setIsSaving] = useState(false);
+
     const defaultFormState: Partial<SiteLogRecord> = {
         date: format(new Date(), 'yyyy-MM-dd'),
         siteName: '',
@@ -46,15 +50,20 @@ const ExpensesDetail = () => {
 
     // Load existing data
     useEffect(() => {
-        if (!isNew && id) {
-            const logs = StorageService.getSiteLogs();
-            const found = logs.find(l => l.id === id);
-            if (found) {
-                setFormData(found);
-            } else {
-                navigate('/expenses');
+        const loadData = async () => {
+            if (!isNew && id) {
+                const logsRes = await api.expenses.getLogs({});
+                if (logsRes.success) {
+                    const found = logsRes.data.find(l => l.id === id);
+                    if (found) {
+                        setFormData(found);
+                    } else {
+                        navigate('/expenses');
+                    }
+                }
             }
-        }
+        };
+        loadData();
     }, [id, isNew, navigate]);
 
     // Auto-calculate Hours
@@ -87,8 +96,9 @@ const ExpensesDetail = () => {
         }
     }, [formData.totalHours, formData.hourlyRate, formData.paxGw, formData.paxReo]);
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSaving(true);
         
         const newLog: SiteLogRecord = {
             id: (!isNew && id) ? id : Date.now().toString(),
@@ -111,13 +121,24 @@ const ExpensesDetail = () => {
             remarks: formData.remarks || ''
         };
 
-        StorageService.saveSiteLog(newLog);
-        navigate('/expenses');
+        try {
+            const res = await api.expenses.createLog(newLog);
+            if (res.success) {
+                navigate('/expenses');
+            } else {
+                alert("Failed to save log: " + res.message);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred while saving.");
+        } finally {
+            setIsSaving(false);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!isNew && id && window.confirm("Are you sure you want to delete this log?")) {
-            StorageService.deleteSiteLog(id);
+            await api.expenses.deleteLog(id);
             navigate('/expenses');
         }
     };
@@ -126,7 +147,7 @@ const ExpensesDetail = () => {
     const labelClass = "block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1";
 
     return (
-        <div className="space-y-6 animate-fade-in pb-10">
+        <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
             {/* Header */}
             <div className="flex items-center gap-4 border-b border-slate-200 pb-4">
                 <button 
@@ -271,8 +292,9 @@ const ExpensesDetail = () => {
                                 <Trash2 size={16} /> Delete
                             </button>
                         )}
-                        <button type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 transition-all order-1 sm:order-3">
-                            <CheckSquare size={16} /> Save Record
+                        <button type="submit" disabled={isSaving} className="px-8 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 transition-all order-1 sm:order-3 disabled:opacity-50">
+                            {isSaving ? <Loader2 size={16} className="animate-spin" /> : <CheckSquare size={16} />}
+                            Save Record
                         </button>
                     </div>
 

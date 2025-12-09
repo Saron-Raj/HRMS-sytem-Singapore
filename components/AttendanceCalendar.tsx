@@ -283,48 +283,4 @@ export const AttendanceCalendar = ({ employeeId, compact = false, editable = fal
 
                         return (
                             <div key={day.toISOString()} title={status.holidayName || status.label} className={`aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-bold border transition-all cursor-default relative group shadow-sm ${status.color} ${!isCurrentMonth ? 'opacity-30 grayscale' : ''} ${isTodayDate ? 'ring-2 ring-blue-500 ring-offset-2 z-10' : ''}`}>
-                            <span className={`${isTodayDate ? 'text-blue-600' : ''}`}>{format(day, 'd')}</span>
-                            {status.holidayName && (<span className="absolute top-1 right-1 bg-purple-600 text-white text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded-full shadow-sm">H</span>)}
-                            </div>
-                        );
-                        })}
-                    </div>
-                </div>
-            </div>
-        )}
-
-        {viewMode === 'list' && (
-            <div className="flex-1 overflow-auto bg-white">
-                <table className="w-full text-xs text-left min-w-[500px]">
-                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 sticky top-0 z-10">
-                        <tr><th className="px-3 py-2 w-16">Date</th><th className="px-1 py-2 text-center w-28">In</th><th className="px-1 py-2 text-center w-28">Out</th><th className="px-2 py-2 w-14 text-center">OT</th><th className="px-2 py-2 w-12 text-center">Lun</th><th className="px-3 py-2">Site / Remarks</th></tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {listDays.map(day => {
-                            const dateStr = format(day, 'yyyy-MM-dd');
-                            const record: Partial<AttendanceRecord> = attendance.find(r => r.date === dateStr) || {};
-                            const isSun = isSunday(day);
-                            const holiday = (settings.publicHolidays || []).find(h => h.date === dateStr);
-                            
-                            return (
-                                <tr key={dateStr} className={`hover:bg-slate-50 ${isSun || holiday ? 'bg-slate-50/50' : ''}`}>
-                                    <td className="px-3 py-2"><div className="font-bold text-slate-700">{format(day, 'dd MMM')}</div><div className="text-[10px] text-slate-400 uppercase font-bold">{format(day, 'EEE')}</div>{holiday && <div className="text-[9px] text-purple-600 font-bold truncate max-w-[60px]">{holiday.name}</div>}</td>
-                                    <td className="px-1 py-2 text-center">
-                                        <TimePicker value={record.startTime || ''} onChange={val => handleUpdateRecord(dateStr, 'startTime', val)} />
-                                    </td>
-                                    <td className="px-1 py-2 text-center">
-                                        <TimePicker value={record.endTime || ''} onChange={val => handleUpdateRecord(dateStr, 'endTime', val)} />
-                                    </td>
-                                    <td className="px-1 py-2"><input type="number" step="0.5" className={inputClass} value={record.otHours || ''} onChange={e => handleUpdateRecord(dateStr, 'otHours', e.target.value)} /></td>
-                                    <td className="px-1 py-2"><select className={inputClass} value={record.lunchHours || 0} onChange={e => handleUpdateRecord(dateStr, 'lunchHours', e.target.value)}><option value="0">0</option><option value="1">1</option></select></td>
-                                    <td className="px-1 py-2 flex gap-1"><input type="text" placeholder="Site Name" className={`${inputClass} text-left`} value={record.siteLocation || ''} onChange={e => handleUpdateRecord(dateStr, 'siteLocation', e.target.value)} /><select className="w-16 text-center bg-white border border-slate-200 rounded px-1 py-1 text-xs font-bold text-slate-600 outline-none" value={record.remarks || ''} onChange={e => handleUpdateRecord(dateStr, 'remarks', e.target.value)}><option value="">-</option><option value="MC">MC</option><option value="OFF">OFF</option></select></td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
-            </div>
-        )}
-    </div>
-  );
-};
+                            <span className={`${isTodayDate ? 'text-blue-600' : ''}`}>{format(

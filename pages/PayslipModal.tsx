@@ -293,10 +293,10 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
     <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex flex-col items-center justify-start overflow-y-auto print:bg-white print:overflow-visible print:absolute print:inset-0">
        
        {/* CONTROLS HEADER */}
-       <div className="w-full max-w-7xl bg-white m-4 p-4 rounded-2xl shadow-2xl flex flex-col gap-4 print:hidden shrink-0 z-50 border border-slate-200">
+       <div className="w-full max-w-7xl bg-white m-4 p-4 rounded-2xl shadow-2xl flex flex-col gap-4 print:hidden shrink-0 z-50 border border-slate-200 sticky top-4">
            <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
                {/* Left: Info */}
-               <div className="flex items-center gap-4">
+               <div className="flex items-center gap-4 w-full lg:w-auto">
                   <div>
                       <h3 className="font-bold text-slate-900 text-lg">Payslip Generator</h3>
                       <div className="flex items-center gap-2 mt-1">
@@ -306,50 +306,50 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
                </div>
 
                {/* Center: Date Selection */}
-               <div className="flex flex-wrap items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-inner">
-                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+               <div className="flex flex-col md:flex-row items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-inner w-full lg:w-auto">
+                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm w-full md:w-auto justify-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">From</span>
                         <input 
                             type="month" 
                             value={startMonth}
                             onChange={(e) => setStartMonth(e.target.value)}
-                            className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer"
+                            className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer w-[110px]"
                         />
                     </div>
-                    <div className="w-4 h-[2px] bg-slate-300 rounded-full"></div>
-                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+                    <div className="w-4 h-[2px] bg-slate-300 rounded-full hidden md:block"></div>
+                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm w-full md:w-auto justify-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">To</span>
                         <input 
                             type="month" 
                             value={endMonth}
                             onChange={(e) => setEndMonth(e.target.value)}
-                            className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer"
+                            className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer w-[110px]"
                         />
                     </div>
-                    <div className="w-px h-6 bg-slate-300 mx-2 hidden sm:block"></div>
-                    <div className="flex gap-2">
-                        <button onClick={() => handlePresetRange(6)} className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm">6 Months</button>
-                        <button onClick={() => handlePresetRange(12)} className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm">1 Year</button>
+                    <div className="w-px h-6 bg-slate-300 mx-2 hidden md:block"></div>
+                    <div className="flex gap-2 w-full md:w-auto">
+                        <button onClick={() => handlePresetRange(6)} className="flex-1 md:flex-none px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm whitespace-nowrap">6 Months</button>
+                        <button onClick={() => handlePresetRange(12)} className="flex-1 md:flex-none px-3 py-1.5 bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-xs font-bold rounded-lg text-slate-600 transition shadow-sm whitespace-nowrap">1 Year</button>
                     </div>
                </div>
 
                {/* Right: View Toggles */}
-               <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+               <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 w-full lg:w-auto">
                     <button 
                         onClick={() => setViewMode('payslip')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'payslip' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'}`}
+                        className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'payslip' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'}`}
                     >
                          Payslip
                     </button>
                     <button 
                         onClick={() => setViewMode('timecard')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'timecard' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500'}`}
+                        className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'timecard' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500'}`}
                     >
                          Time Card
                     </button>
                     <button 
                         onClick={() => setViewMode('full')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'full' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
+                        className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'full' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
                     >
                          Full
                     </button>
@@ -357,27 +357,27 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
            </div>
 
            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-100 pt-3">
-               <div className="flex flex-wrap items-center justify-center gap-2">
+               <div className="flex flex-wrap items-center justify-center gap-2 w-full sm:w-auto">
                    <button 
                         onClick={() => handleDownloadPDF('payslip')}
                         disabled={isGenerating}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                        className="flex-1 sm:flex-none px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50"
                     >
-                        <Download size={16} /> Download Payslip Only
+                        <Download size={16} /> Payslip Only
                     </button>
                     <button 
                         onClick={() => handleDownloadPDF('timecard')}
                         disabled={isGenerating}
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20 disabled:opacity-50"
+                        className="flex-1 sm:flex-none px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 disabled:opacity-50"
                     >
-                        <Download size={16} /> Download Time Card Only
+                        <Download size={16} /> Time Card Only
                     </button>
                     <button 
                         onClick={() => handleDownloadPDF('full')}
                         disabled={isGenerating}
-                        className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20 disabled:opacity-50"
+                        className="flex-1 sm:flex-none px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 disabled:opacity-50"
                     >
-                        <Download size={16} /> Download Both
+                        <Download size={16} /> Both
                     </button>
                </div>
                <button onClick={onClose} className="p-2 sm:ml-4 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg transition-colors w-full sm:w-auto flex justify-center mt-2 sm:mt-0">
@@ -386,9 +386,9 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
            </div>
        </div>
 
-       {/* DOCUMENT PREVIEW */}
-       <div className="w-full overflow-x-auto flex justify-center bg-slate-100/10 backdrop-blur-sm p-4 rounded-xl">
-           <div ref={payslipContainerRef} className="pb-20 print:pb-0 print:w-full min-w-fit flex flex-col items-center">
+       {/* DOCUMENT PREVIEW WITH HORIZONTAL SCROLL */}
+       <div className="w-full overflow-x-auto flex justify-start lg:justify-center bg-slate-100/10 backdrop-blur-sm p-4 rounded-xl">
+           <div ref={payslipContainerRef} className="pb-20 print:pb-0 print:w-full min-w-[210mm] flex flex-col items-center mx-auto">
                {monthlyDataList.map((mItem) => {
                    const monthDate = parse(mItem.month, 'yyyy-MM', new Date());
                    const periodStart = startOfMonth(monthDate);
@@ -514,7 +514,6 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
                                    </div>
                                    
                                    {/* NET PAY BOX */}
-                                   {/* Positioning: If in full view with image, use mt-4 (top). If separate view or no image, use mt-auto (bottom). */}
                                    <div className={`net-pay-section border-2 border-black p-2 bg-slate-50 ${hasImage && viewMode === 'full' ? 'mt-4' : 'mt-auto'}`}>
                                        <div className="flex justify-between items-center">
                                            <span className="font-extrabold text-sm uppercase">NET PAY (A+B-C+D+E)</span>
@@ -523,7 +522,6 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
                                    </div>
 
                                    {/* ATTACHED IMAGE (Manual Time Card) */}
-                                   {/* Only render in DOM if it exists. Hide via CSS if not in full view so we can remove/unhide during PDF generation */}
                                    {mItem.attachedImage && (
                                        <div className={`attached-image-section mt-4 flex-1 flex items-center justify-center p-1 border border-dashed border-slate-200 min-h-[80px] ${viewMode !== 'full' ? 'hidden' : ''}`}>
                                            <img src={mItem.attachedImage} className="w-full h-full object-contain max-h-[150px]" alt="Attached Card" />
@@ -561,45 +559,25 @@ const PayslipModal: React.FC<Props> = ({ employee, data: initialData, onClose })
                            </div>
                        </div>
 
-                       {/* FOOTER SIGNATURES - BOXED MODEL (ADJUSTED HEIGHTS) */}
+                       {/* FOOTER SIGNATURES */}
                        <div className="mt-[5px] border-2 border-black flex text-xs flex-none">
-                            {/* Left Side: Authorized Sign & Stamp */}
                             <div className="flex-1 border-r-2 border-black flex flex-col">
-                                {/* Top Section: Authorized Signature - HEIGHT INCREASED FOR 100px IMAGES */}
                                 <div className="px-2 pt-1 pb-1 flex-1 relative flex flex-col justify-between h-[120px]">
                                      <div className="font-bold text-[10px] text-slate-500 uppercase leading-none">AUTHORIZED SIGNATURE & STAMP</div>
                                      <div className="flex-1 flex items-end justify-center gap-4">
-                                          {/* Signature */}
-                                          {company?.signature && (
-                                              <img 
-                                                  src={company.signature} 
-                                                  className="max-h-[100px] w-auto object-contain mix-blend-multiply" 
-                                                  alt="Signature" 
-                                              />
-                                          )}
-                                          {/* Stamp */}
-                                          {company?.stamp && (
-                                              <img 
-                                                  src={company.stamp} 
-                                                  className="max-h-[100px] w-auto object-contain mix-blend-multiply opacity-90" 
-                                                  alt="Stamp" 
-                                              />
-                                          )}
+                                          {company?.signature && <img src={company.signature} className="max-h-[100px] w-auto object-contain mix-blend-multiply" alt="Signature" />}
+                                          {company?.stamp && <img src={company.stamp} className="max-h-[100px] w-auto object-contain mix-blend-multiply opacity-90" alt="Stamp" />}
                                      </div>
                                 </div>
-                                {/* Bottom Section: Employer Text - HEIGHT 23px */}
                                 <div className="border-t-2 border-black h-[23px] flex items-center justify-center bg-slate-50">
                                     <span className="font-bold text-xs uppercase text-black">EMPLOYER</span>
                                 </div>
                             </div>
 
-                            {/* Right Side: Employee Signature */}
                             <div className="flex-1 flex flex-col">
-                                 {/* Top Section: Acknowledged By - HEIGHT INCREASED TO MATCH */}
                                 <div className="px-2 pt-1 pb-1 flex-1 relative h-[120px]">
                                      <div className="font-bold text-[10px] text-slate-500 uppercase leading-none">ACKNOWLEDGED BY</div>
                                 </div>
-                                 {/* Bottom Section: Employee Signature Text - HEIGHT 23px */}
                                 <div className="border-t-2 border-black h-[23px] flex items-center justify-center bg-slate-50">
                                     <span className="font-bold text-xs uppercase text-black">EMPLOYEE SIGNATURE</span>
                                 </div>

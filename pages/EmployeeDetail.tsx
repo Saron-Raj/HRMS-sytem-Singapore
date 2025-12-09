@@ -267,7 +267,7 @@ const EmployeeDetail = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
         {/* Header */}
         <div className="flex items-center gap-4 border-b border-slate-200 pb-4">
             <button 
@@ -416,7 +416,7 @@ const EmployeeDetail = () => {
                             label="Basic Salary ($)" 
                             type="number"
                             value={formData.basicSalary} 
-                            onChange={(e: any) => setFormData({...formData, basicSalary: parseFloat(e.target.value)})} 
+                            onChange={(e: any) => setFormData({...formData, basicSalary: parseFloat(e.target.value) || 0})} 
                             placeholder="0.00" 
                             required
                         />

@@ -227,9 +227,8 @@ const AiAssistant = () => {
     };
 
     return (
-        // Adjusted height to account for mobile navbar differences
-        <div className="h-[calc(100dvh-100px)] md:h-[calc(100dvh-140px)] flex flex-col gap-4 md:gap-6 animate-fade-in">
-            <div className="print:hidden space-y-4 md:space-y-6 flex flex-col h-full">
+        <div className="h-[calc(100dvh-7rem)] md:h-[calc(100dvh-8rem)] flex flex-col gap-4 animate-fade-in pb-4">
+            <div className="print:hidden space-y-4 flex flex-col h-full">
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                         <Sparkles className="text-blue-500 fill-blue-100" /> AI Assistant
@@ -283,7 +282,7 @@ const AiAssistant = () => {
 
                                     {/* SEARCH RESULTS */}
                                     {msg.searchResults && msg.searchResults.length > 0 && (
-                                        <div className="grid grid-cols-1 gap-2 animate-fade-in w-full min-w-[300px]">
+                                        <div className="grid grid-cols-1 gap-2 animate-fade-in w-full min-w-[280px]">
                                             {msg.searchResults.map((result, idx) => (
                                                 <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 hover:border-blue-300 transition-colors shadow-sm flex items-center justify-between group">
                                                     <div className="flex items-center gap-3">
@@ -318,7 +317,7 @@ const AiAssistant = () => {
                     </div>
 
                     {/* Suggestions & Input Area */}
-                    <div className="bg-white border-t border-slate-100 p-4">
+                    <div className="bg-white border-t border-slate-100 p-3 md:p-4">
                         {messages.length < 3 && (
                             <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
                                 {SUGGESTIONS.map((s, i) => (
@@ -339,13 +338,13 @@ const AiAssistant = () => {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Ask me anything..." 
-                                className="w-full pl-6 pr-14 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm"
+                                className="w-full pl-6 pr-14 py-3 md:py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm"
                                 autoFocus
                             />
                             <button 
                                 type="submit" 
                                 disabled={!input.trim() || isLoading}
-                                className="absolute right-2 top-2 p-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all shadow-md"
+                                className="absolute right-2 top-2 bottom-2 p-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all shadow-md aspect-square flex items-center justify-center"
                             >
                                 <Send size={20} />
                             </button>

@@ -87,6 +87,17 @@ export interface WorkerDocument {
   size: number; // Bytes
 }
 
+export interface OfficeDocument {
+  id: string;
+  name: string;
+  category: string;
+  uploadDate: string;
+  documentDate?: string; // YYYY-MM-DD - The actual date of the document
+  fileData: string; // Base64
+  fileType: string;
+  size: number;
+}
+
 export interface Company {
   id: string;
   name: string;

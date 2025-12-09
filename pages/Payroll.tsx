@@ -1,18 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Employee, PayrollRecord } from '../types';
 import { format, addMonths, subMonths, parse } from 'date-fns';
-import { Edit2, ChevronLeft, ChevronRight, Archive, Loader2, FileText } from 'lucide-react';
+import { Edit2, ChevronLeft, ChevronRight, Archive, Loader2, FileText, DollarSign, Clock, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import JSZip from 'jszip';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-
-// Helper for bulk zip generation (can be moved to utils or shared component later)
-// For now, we reuse the pattern from PayslipViewPage inside the loop logic
-// or we skip re-implementing the visual template here and focus on the data logic, 
-// as the user's primary request was navigation to new pages.
-// To keep "Download All (ZIP)" working, we'll keep the logic but use API data.
 
 const Payroll = () => {
   const navigate = useNavigate();
@@ -54,31 +49,18 @@ const Payroll = () => {
   };
 
   const handleBulkDownload = async () => {
-      // NOTE: In a real backend scenario, this would be a single API call: 
-      // window.location.href = `/api/payroll/download-zip?month=${selectedMonth}`;
-      // Since we are simulating, we would technically need to render every payslip invisibly and zip them.
-      // Given the complexity of the new PayslipViewPage logic (DOM rendering), 
-      // let's alert the user that this feature would be server-side in the backend version.
       alert("In the backend integrated version, this button will download a generated ZIP from the server directly.");
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h2 className="text-2xl font-bold text-slate-800">Payroll Management</h2>
               <p className="text-slate-500">View salaries and generate payslips for active workers</p>
             </div>
-            <div className="flex items-center gap-3">
-                 <button 
-                    onClick={handleBulkDownload}
-                    disabled={isZipping || payrollData.length === 0 || isLoading}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-900 transition shadow-lg shadow-slate-900/10 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                    {isZipping ? <Loader2 size={16} className="animate-spin" /> : <Archive size={16} />}
-                    {isZipping ? 'Zipping...' : 'Download All (ZIP)'}
-                </button>
-                <div className="flex items-center bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+                <div className="flex items-center bg-white p-1 rounded-xl shadow-sm border border-slate-200 w-full sm:w-auto justify-center">
                     <button 
                         onClick={handlePrevMonth} 
                         className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"
@@ -86,12 +68,12 @@ const Payroll = () => {
                     >
                         <ChevronLeft size={20} />
                     </button>
-                    <div className="px-2 border-x border-slate-100">
+                    <div className="px-2 border-x border-slate-100 flex items-center">
                         <input 
                             type="month" 
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="outline-none text-black font-bold bg-transparent text-sm cursor-pointer"
+                            className="outline-none text-black font-bold bg-transparent text-sm cursor-pointer w-[120px] text-center"
                         />
                     </div>
                     <button 
@@ -102,12 +84,21 @@ const Payroll = () => {
                         <ChevronRight size={20} />
                     </button>
                 </div>
+                 <button 
+                    onClick={handleBulkDownload}
+                    disabled={isZipping || payrollData.length === 0 || isLoading}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-900 transition shadow-lg shadow-slate-900/10 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                    {isZipping ? <Loader2 size={16} className="animate-spin" /> : <Archive size={16} />}
+                    {isZipping ? 'Zipping...' : 'Download ZIP'}
+                </button>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+            {/* DESKTOP TABLE VIEW */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm text-left min-w-[800px]">
                 <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
                   <tr>
                     <th className="px-6 py-4">Employee</th>
@@ -162,6 +153,64 @@ const Payroll = () => {
                     )}
                 </tbody>
               </table>
+            </div>
+
+            {/* MOBILE CARD VIEW */}
+            <div className="md:hidden flex flex-col">
+                {isLoading ? (
+                    <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-500"/></div>
+                ) : payrollData.length === 0 ? (
+                    <div className="p-8 text-center text-slate-400">No active employees found.</div>
+                ) : (
+                    payrollData.map((record) => {
+                        const emp = employees.find(e => e.id === record.employeeId);
+                        if (!emp) return null;
+                        return (
+                            <div key={record.employeeId} className="p-4 border-b border-slate-100 last:border-0 bg-white">
+                                <div className="flex justify-between items-start mb-3">
+                                    <div>
+                                        <div className="font-bold text-slate-900 text-sm">{emp.name}</div>
+                                        <div className="text-xs text-slate-500">{emp.salaryType}</div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="font-extrabold text-slate-900 text-lg">${record.netSalary.toFixed(2)}</div>
+                                        <div className="text-[10px] text-slate-400 uppercase font-bold">Net Salary</div>
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 gap-2 mb-4">
+                                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1"><Calendar size={10} /> Days</div>
+                                        <div className="font-bold text-slate-700">{record.totalDaysWorked}</div>
+                                    </div>
+                                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1"><Clock size={10} /> OT</div>
+                                        <div className="font-bold text-slate-700">{record.totalOtHours.toFixed(1)}h</div>
+                                    </div>
+                                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1"><DollarSign size={10} /> Basic</div>
+                                        <div className="font-bold text-slate-700">${record.basicPayTotal.toFixed(0)}</div>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-2">
+                                     <button 
+                                        onClick={() => navigate(`/payroll/adjustments/${emp.id}/${selectedMonth}`)}
+                                        className="flex-1 py-2 bg-slate-50 text-slate-600 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border border-slate-200"
+                                    >
+                                        <Edit2 size={14} /> Adjustments
+                                    </button>
+                                    <button 
+                                        onClick={() => navigate(`/payroll/payslip/${emp.id}/${selectedMonth}`)}
+                                        className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-2"
+                                    >
+                                        <FileText size={14} /> Payslip
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
             </div>
           </div>
     </div>

@@ -160,48 +160,49 @@ const PayslipViewPage = () => {
     if (!employee) return null;
 
     return (
-        <div className="space-y-6 animate-fade-in pb-10">
+        <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 sticky top-0 z-20 print:hidden">
-                <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-                     <div className="flex items-center gap-4 w-full lg:w-auto">
-                        <button onClick={() => navigate('/payroll')} className="p-2 bg-slate-50 border border-slate-200 rounded-xl hover:bg-white text-slate-500 transition-colors shadow-sm">
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
+                     <div className="flex items-center gap-4 w-full xl:w-auto">
+                        <button onClick={() => navigate('/payroll')} className="p-2 bg-slate-50 border border-slate-200 rounded-xl hover:bg-white text-slate-500 transition-colors shadow-sm shrink-0">
                             <ArrowLeft size={20} />
                         </button>
-                        <div>
-                            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Generate Payslip</h2>
+                        <div className="min-w-0">
+                            <h2 className="text-xl font-bold text-slate-900 tracking-tight truncate">Generate Payslip</h2>
                             <div className="flex items-center gap-2 text-sm text-slate-500">
-                                <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{employee.name}</span>
+                                <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded truncate">{employee.name}</span>
                             </div>
                         </div>
                      </div>
-                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-                         <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
-                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+                     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full xl:w-auto">
+                         <div className="flex flex-wrap items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 w-full md:w-auto justify-center">
+                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex-1 md:flex-none justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">From</span>
-                                <input type="month" value={startMonth} onChange={(e) => setStartMonth(e.target.value)} className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer" />
+                                <input type="month" value={startMonth} onChange={(e) => setStartMonth(e.target.value)} className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer w-[110px]" />
                             </div>
-                            <div className="w-4 h-[2px] bg-slate-300 rounded-full"></div>
-                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="w-4 h-[2px] bg-slate-300 rounded-full hidden md:block"></div>
+                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm flex-1 md:flex-none justify-center">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">To</span>
-                                <input type="month" value={endMonth} onChange={(e) => setEndMonth(e.target.value)} className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer" />
+                                <input type="month" value={endMonth} onChange={(e) => setEndMonth(e.target.value)} className="bg-transparent text-slate-900 text-xs font-bold outline-none cursor-pointer w-[110px]" />
                             </div>
                          </div>
-                         <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                                <button onClick={() => setViewMode('payslip')} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'payslip' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'}`}>Payslip</button>
-                                <button onClick={() => setViewMode('timecard')} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'timecard' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500'}`}>Time Card</button>
-                                <button onClick={() => setViewMode('full')} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'full' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Full</button>
+                         <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 w-full md:w-auto">
+                                <button onClick={() => setViewMode('payslip')} className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'payslip' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'}`}>Payslip</button>
+                                <button onClick={() => setViewMode('timecard')} className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'timecard' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500'}`}>Time Card</button>
+                                <button onClick={() => setViewMode('full')} className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'full' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Full</button>
                         </div>
                      </div>
                 </div>
                 <div className="flex flex-wrap justify-end gap-3 mt-4 pt-4 border-t border-slate-100">
-                   <button onClick={() => handleDownloadPDF('payslip')} disabled={isGenerating} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50"><Download size={16} /> Payslip Only</button>
-                   <button onClick={() => handleDownloadPDF('timecard')} disabled={isGenerating} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20 disabled:opacity-50"><Download size={16} /> Time Card Only</button>
-                   <button onClick={() => handleDownloadPDF('full')} disabled={isGenerating} className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20 disabled:opacity-50"><Download size={16} /> Both</button>
+                   <button onClick={() => handleDownloadPDF('payslip')} disabled={isGenerating} className="flex-1 sm:flex-none px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50"><Download size={16} /> Payslip Only</button>
+                   <button onClick={() => handleDownloadPDF('timecard')} disabled={isGenerating} className="flex-1 sm:flex-none px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 disabled:opacity-50"><Download size={16} /> Time Card Only</button>
+                   <button onClick={() => handleDownloadPDF('full')} disabled={isGenerating} className="flex-1 sm:flex-none px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 disabled:opacity-50"><Download size={16} /> Both</button>
                 </div>
             </div>
 
-            <div className="w-full overflow-x-auto flex justify-center bg-slate-100/50 rounded-2xl py-8">
-                <div ref={payslipContainerRef} className="pb-20 print:pb-0 print:w-full flex flex-col items-center min-w-fit px-4">
+            {/* A4 Preview Container with Horizontal Scroll for Mobile */}
+            <div className="w-full overflow-x-auto flex justify-start lg:justify-center bg-slate-100/50 rounded-2xl py-8">
+                <div ref={payslipContainerRef} className="pb-20 print:pb-0 print:w-full flex flex-col items-center min-w-[210mm] px-4 mx-auto">
                     {monthlyDataList.map((mItem) => {
                         const monthDate = parse(mItem.month, 'yyyy-MM', new Date());
                         const periodStart = startOfMonth(monthDate);

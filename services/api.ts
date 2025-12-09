@@ -1,8 +1,10 @@
+
+
 import { 
     Employee, AttendanceRecord, SiteLogRecord, ProjectBudget, 
     ApiResponse, ExpenseFilter, ExpenseSummary, DashboardStats, 
     AlertItem, WorkerDocument, AppSettings, AdminProfile, PayrollRecord, 
-    PayrollAdjustments, PayrollHistoryLog, Company, SalaryType
+    PayrollAdjustments, PayrollHistoryLog, Company, SalaryType, OfficeDocument
 } from '../types';
 import { supabase } from './supabaseClient';
 import { StorageService } from './storage'; 
@@ -537,6 +539,29 @@ export const api = {
         },
         delete: async (id: string): Promise<ApiResponse<boolean>> => {
             await supabase.from('worker_documents').delete().eq('id', id);
+            return success(true);
+        }
+    },
+
+    // --- OFFICE DOCUMENTS MODULE ---
+    officeDocuments: {
+        getAll: async (): Promise<ApiResponse<OfficeDocument[]>> => {
+            const { data, error: err } = await supabase.from('office_documents').select('*');
+            if (err) {
+                 // Fallback if table doesn't exist yet in the user's specific Supabase instance
+                 console.warn("Office documents table might be missing:", err.message);
+                 return success([]); 
+            }
+            return success(data as OfficeDocument[]);
+        },
+        save: async (doc: OfficeDocument): Promise<ApiResponse<OfficeDocument>> => {
+            const { data, error: err } = await supabase.from('office_documents').insert(doc).select().single();
+            if (err) return error(err.message);
+            return success(data as OfficeDocument);
+        },
+        delete: async (id: string): Promise<ApiResponse<boolean>> => {
+            const { error: err } = await supabase.from('office_documents').delete().eq('id', id);
+            if (err) return error(err.message);
             return success(true);
         }
     },

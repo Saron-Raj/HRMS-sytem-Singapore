@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { api } from '../services/api'; // Use new API Service
+import { api } from '../services/api'; 
 import { SiteLogRecord, ExpenseSummary } from '../types';
-import { Plus, Search, Trash2, FileSpreadsheet, Construction, Wallet, Edit2, Check, Fuel, Users, HardHat, DollarSign, Loader2 } from 'lucide-react';
+import { Plus, Search, Trash2, FileSpreadsheet, Construction, Wallet, Edit2, Check, Fuel, Users, HardHat, DollarSign, Loader2, Calendar, Clock } from 'lucide-react';
 import { format, endOfMonth, parseISO, startOfMonth } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { utils, writeFile } from 'xlsx';
@@ -34,10 +34,7 @@ const Expenses = () => {
   // Load Unique Sites for dropdown (Initial load only)
   useEffect(() => {
       const loadSites = async () => {
-          // Optimization: Ideally the API has a separate endpoint for "sites list", 
-          // but for now we fetch all logs once or assume we have a list. 
-          // Here we default to filtering on the result.
-          const res = await api.expenses.getLogs({}); // Get all to find sites
+          const res = await api.expenses.getLogs({}); 
           if(res.success) {
               const sites = Array.from(new Set(res.data.map(l => l.siteName))).sort();
               setUniqueSites(sites);
@@ -49,14 +46,13 @@ const Expenses = () => {
   // Main Data Fetcher
   useEffect(() => {
     fetchData();
-  }, [searchTerm, startDate, endDate, selectedSite]); // Re-fetch when filters change
+  }, [searchTerm, startDate, endDate, selectedSite]); 
 
   const fetchData = async () => {
       setLoading(true);
       const filter = { startDate, endDate, siteName: selectedSite, search: searchTerm };
       
       try {
-          // Parallel Fetching for performance
           const [logsRes, summaryRes] = await Promise.all([
               api.expenses.getLogs(filter),
               api.expenses.getSummary(filter)
@@ -78,7 +74,7 @@ const Expenses = () => {
       e.stopPropagation();
       if (window.confirm("Delete this site log record?")) {
           await api.expenses.deleteLog(id);
-          fetchData(); // Refresh data
+          fetchData(); 
       }
   };
 
@@ -87,7 +83,7 @@ const Expenses = () => {
       const amount = parseFloat(tempBudget) || 0;
       await api.expenses.saveBudget(selectedSite, amount);
       setIsEditingBudget(false);
-      fetchData(); // Refresh summary to update balance
+      fetchData(); 
   };
 
   const handleExportExcel = () => {
@@ -142,7 +138,7 @@ const Expenses = () => {
              </div>
           </div>
           <div className="mt-2">
-             <div className="text-2xl font-extrabold text-slate-800">${amount.toLocaleString()}</div>
+             <div className="text-xl md:text-2xl font-extrabold text-slate-800">${amount.toLocaleString()}</div>
              {subValue && (
                  <div className="text-xs font-bold text-slate-500 mt-1">{subValue}</div>
              )}
@@ -151,33 +147,33 @@ const Expenses = () => {
   );
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-6 animate-fade-in pb-20 md:pb-10">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Location Expenses</h2>
           <p className="text-slate-500 font-medium">Manage project budgets, manpower costs, and daily logs.</p>
         </div>
-        <div className="flex gap-2 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
             <button 
                 onClick={handleExportExcel} 
                 disabled={logs.length === 0}
-                className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition shadow-sm border border-emerald-100 flex items-center gap-2 font-bold text-sm disabled:opacity-50 flex-1 md:flex-none justify-center"
+                className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-100 transition shadow-sm border border-emerald-100 flex items-center justify-center gap-2 font-bold text-sm disabled:opacity-50 w-full sm:w-auto"
             >
-                <FileSpreadsheet size={20} /> <span className="hidden sm:inline">Export</span> Excel
+                <FileSpreadsheet size={20} /> <span className="inline">Export Excel</span>
             </button>
             <button 
                 onClick={() => navigate('/expenses/new')}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex-1 md:flex-none justify-center"
+                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95 w-full sm:w-auto whitespace-nowrap"
             >
-                <Plus size={20} /> Add <span className="hidden sm:inline">Daily</span> Log
+                <Plus size={20} /> Add Log
             </button>
         </div>
       </div>
 
       {/* FILTERS SECTION */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
-          <div className="flex flex-col xl:flex-row gap-4 items-center">
-                   <div className="relative flex-1 w-full xl:w-auto">
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+                   <div className="relative w-full lg:flex-1">
                         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
                         <input 
                         type="text" 
@@ -187,9 +183,9 @@ const Expenses = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         />
                    </div>
-                   <div className="flex items-center gap-2 w-full xl:w-auto">
+                   <div className="w-full lg:w-auto">
                         <select 
-                                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 w-full xl:w-48"
+                                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-48"
                                 value={selectedSite}
                                 onChange={(e) => setSelectedSite(e.target.value)}
                         >
@@ -197,12 +193,12 @@ const Expenses = () => {
                             {uniqueSites.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                    </div>
-                   <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200 w-full xl:w-auto">
-                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 flex-1 md:flex-none">
+                   <div className="flex flex-col sm:flex-row items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200 w-full lg:w-auto">
+                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 w-full sm:w-auto">
                             <span className="text-[10px] font-bold text-slate-400 uppercase">From</span>
                             <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="outline-none text-xs font-bold text-slate-700 bg-transparent w-full" />
                         </div>
-                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 flex-1 md:flex-none">
+                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 w-full sm:w-auto">
                             <span className="text-[10px] font-bold text-slate-400 uppercase">To</span>
                             <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="outline-none text-xs font-bold text-slate-700 bg-transparent w-full" />
                         </div>
@@ -217,7 +213,7 @@ const Expenses = () => {
       ) : (
       <>
         {/* DETAILED SUMMARY ROW */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4 animate-fade-in">
                 <SummaryCard 
                     title="Manpower" 
                     amount={summary.totalManpowerCost} 
@@ -318,10 +314,10 @@ const Expenses = () => {
                 </div>
         </div>
 
-        {/* Site Log Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-fade-in">
+        {/* TABLE VIEW (MD UP) */}
+        <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-fade-in">
             <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
+            <table className="w-full text-xs text-left min-w-[1000px]">
                 <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider">
                 <tr>
                     <th className="px-4 py-3 whitespace-nowrap">Date</th>
@@ -399,6 +395,62 @@ const Expenses = () => {
                 </tbody>
             </table>
             </div>
+        </div>
+
+        {/* MOBILE CARD VIEW (MD DOWN) */}
+        <div className="md:hidden flex flex-col gap-3">
+             {logs.length === 0 ? (
+                 <div className="text-center py-10 text-slate-400 bg-white rounded-2xl">
+                     <Construction size={32} className="mb-2 opacity-30 mx-auto" />
+                     <p>No logs found.</p>
+                 </div>
+             ) : (
+                 logs.map(log => (
+                     <div key={log.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm space-y-3">
+                         <div className="flex justify-between items-start">
+                             <div>
+                                 <div className="font-bold text-slate-800 text-sm flex items-center gap-1"><Calendar size={12} className="text-slate-400" /> {format(parseISO(log.date), 'dd MMM yyyy')}</div>
+                                 <div className="font-bold text-blue-600 text-base mt-1">{log.siteName}</div>
+                                 <div className="text-xs text-slate-400 font-medium flex items-center gap-1 mt-0.5"><Clock size={10} /> {log.startTime} - {log.endTime} ({log.totalHours}h)</div>
+                             </div>
+                             <div className="text-right">
+                                 <div className="text-lg font-extrabold text-slate-900">${log.manpowerCost?.toFixed(2)}</div>
+                                 <div className="text-[10px] font-bold text-slate-400 uppercase">Manpower</div>
+                             </div>
+                         </div>
+                         
+                         <div className="grid grid-cols-2 gap-2 text-xs">
+                             <div className="bg-slate-50 p-2 rounded border border-slate-100">
+                                 <div className="text-[9px] font-bold text-slate-400 uppercase">Premix</div>
+                                 <div className="font-bold text-slate-700">{log.premixCost ? `$${log.premixCost}` : '-'}</div>
+                             </div>
+                             <div className="bg-slate-50 p-2 rounded border border-slate-100">
+                                 <div className="text-[9px] font-bold text-slate-400 uppercase">Diesel</div>
+                                 <div className="font-bold text-slate-700">{log.dieselCost ? `$${log.dieselCost}` : '-'}</div>
+                             </div>
+                             <div className="bg-slate-50 p-2 rounded border border-slate-100">
+                                 <div className="text-[9px] font-bold text-slate-400 uppercase">Materials</div>
+                                 <div className="font-bold text-slate-700">{log.materialBuy ? `$${log.materialBuy}` : '-'}</div>
+                             </div>
+                             <div className="bg-slate-50 p-2 rounded border border-slate-100">
+                                 <div className="text-[9px] font-bold text-slate-400 uppercase">Pax</div>
+                                 <div className="font-bold text-slate-700">GW:{log.paxGw} / REO:{log.paxReo}</div>
+                             </div>
+                         </div>
+                         
+                         {log.remarks && (
+                             <div className="text-xs text-slate-500 italic bg-slate-50 px-2 py-1 rounded">
+                                 "{log.remarks}"
+                             </div>
+                         )}
+
+                         <div className="flex gap-2 pt-1">
+                             <button onClick={() => navigate(`/expenses/${log.id}`)} className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold flex items-center justify-center gap-1"><Edit2 size={14} /> Edit</button>
+                             <button onClick={(e) => handleDelete(log.id, e)} className="flex-1 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-bold flex items-center justify-center gap-1"><Trash2 size={14} /> Delete</button>
+                         </div>
+                     </div>
+                 ))
+             )}
         </div>
       </>
       )}

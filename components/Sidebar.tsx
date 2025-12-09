@@ -20,7 +20,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <div className="hidden md:flex flex-col w-72 bg-[#0F172A] h-screen fixed left-0 top-0 text-white shadow-2xl z-50 rounded-r-3xl my-0 print:hidden">
+    <div className="hidden lg:flex flex-col w-72 bg-[#0F172A] h-screen fixed left-0 top-0 text-white shadow-2xl z-50 rounded-r-3xl my-0 print:hidden">
       <div className="p-8">
         <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-lg text-xl">

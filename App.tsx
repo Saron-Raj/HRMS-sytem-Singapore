@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -14,6 +15,7 @@ import PayslipViewPage from './pages/PayslipViewPage';
 import Expenses from './pages/Expenses';
 import ExpensesDetail from './pages/ExpensesDetail';
 import Reports from './pages/Reports';
+import OfficeDocuments from './pages/OfficeDocuments';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
@@ -159,7 +161,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout, onOpenProfile }) => {
     };
 
     return (
-        <div className="hidden md:flex justify-between items-center py-4 px-8 mb-4 print:hidden relative z-40">
+        <div className="hidden lg:flex justify-between items-center py-4 px-8 mb-4 print:hidden relative z-40">
             <div className="flex items-center bg-white rounded-full px-4 py-2.5 shadow-sm border border-slate-200 w-96 transition-all hover:border-blue-300 relative group">
                 <Search size={18} className="text-slate-400 absolute left-4 group-focus-within:text-blue-500 transition-colors" />
                 <input 
@@ -296,10 +298,10 @@ const App = () => {
                 isAuthenticated ? (
                   <div className="flex min-h-screen bg-[#F8FAFC]">
                     <Sidebar />
-                    <div className="flex-1 md:ml-72 flex flex-col min-h-screen relative z-0">
+                    <div className="flex-1 lg:ml-72 flex flex-col min-h-screen relative z-0 w-full transition-all duration-300">
                         <Header onLogout={handleLogout} onOpenProfile={() => setIsProfileModalOpen(true)} />
                         <MobileNav />
-                        <main className="flex-1 p-4 md:p-8 overflow-x-hidden w-full max-w-[1600px] mx-auto">
+                        <main className="flex-1 p-4 md:p-8 overflow-x-hidden w-full max-w-[1600px] mx-auto flex flex-col">
                             <Routes>
                                 <Route path="/" element={<Dashboard />} />
                                 
@@ -317,11 +319,19 @@ const App = () => {
                                 <Route path="/expenses/:id" element={<ExpensesDetail />} />
                                 
                                 <Route path="/reports" element={<Reports />} />
+                                <Route path="/office-documents" element={<OfficeDocuments />} />
                                 <Route path="/settings" element={<Settings />} />
                                 <Route path="/ai-assistant" element={<AiAssistant />} />
                                 
                                 <Route path="*" element={<Navigate to="/" replace />} />
                             </Routes>
+                            
+                            {/* Footer */}
+                            <footer className="mt-auto pt-8 pb-4 text-center">
+                                <p className="text-xs text-slate-400 font-medium">
+                                    @2025 Quality M&E Pte Ltd • Developed By Saron
+                                </p>
+                            </footer>
                         </main>
 
                         {isProfileModalOpen && (
